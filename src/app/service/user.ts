@@ -3,13 +3,18 @@ import type { IUserModel } from '../model/user'
 import { User } from '../model'
 import { Paging } from '../dto/base'
 import { decodeToken } from '~/core/auth'
+// 引入事务
+import { Transaction, Sequelize } from 'sequelize'
+import { createOneVip } from '../service/vip'
 
 export const createOne = async (newOne: IUserModel): Promise<User> => {
   const one = await User.findOne({ where: { username: newOne.username } })
   if (one) {
     global.UnifyResponse.parameterException(10409)
   }
-  return await User.create(newOne)
+  const user = await User.create(newOne)
+  await createOneVip(user.id)
+  return user
 }
 
 export const updateOne = async (newOne: IUserModel): Promise<User> => {

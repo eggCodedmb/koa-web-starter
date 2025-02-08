@@ -51,7 +51,6 @@ export default class UserController {
   @description('example: /user/me')
   @tag
   @security([{ api_key: [] }])
-  @auth()
   async me(ctx: Context) {
     const user = await curUser(ctx)
     const vip = await getVIPById(user.id)
@@ -102,9 +101,7 @@ export default class UserController {
   async create(ctx: Context) {
     const user = ctx.validatedBody
     user.password = await encrypt(user.password)
-
-    const res = await createOne(user)
-    await createOneVip(res.id)
+    await createOne(user)
     global.UnifyResponse.createSuccess({ code: global.SUCCESS_CODE })
   }
 
