@@ -1,0 +1,69 @@
+import type { Dialect } from 'sequelize'
+import { Sequelize } from 'sequelize'
+import CONFIG from '~/config'
+
+const DATABASE = CONFIG.DATABASE
+
+class SequelizeClient {
+  private static _instance: SequelizeClient
+  private sequelizeClient: Sequelize | null = null
+  public enableStatus: boolean = false
+
+  private constructor() {
+    const sequelizeClient = new Sequelize(
+      DATABASE.DB_NAME,
+      DATABASE.USER,
+      DATABASE.PASSWORD,
+      {
+        dialect: DATABASE.DIALECT as Dialect,
+        host: DATABASE.HOST,
+        port: DATABASE.PORT,
+        dialectOptions: {
+          dateStrings: true,
+          typeCast: true,
+        },
+        timezone: DATABASE.TIMEZONE,
+        logging: false,
+      },
+    )
+    sequelizeClient
+      .authenticate()
+      .then(() => {
+        this.enableStatus = true
+        console.log('SequelizeClient has been login successfully.')
+      })
+      .catch((err) => {
+        this.enableStatus = false
+        sequelizeClient.close()
+        console.error('Unable to connect to the database:', err)
+      })
+
+    this.sequelizeClient = sequelizeClient
+
+    // 同步模型
+    this.syncModel()
+  }
+
+  public static getInstance() {
+    if (!this._instance) {
+      SequelizeClient._instance = new SequelizeClient()
+    }
+    return SequelizeClient._instance
+  }
+
+  public config() {
+    return this.sequelizeClient!
+  }
+
+  public enable() {
+    return this.enableStatus
+  }
+
+  // 同步模型
+  public async syncModel(){
+    await this.sequelizeClient?.sync({ alter: true })
+    console.log('同步所有模型');
+  }
+}
+
+export default SequelizeClient.getInstance()
