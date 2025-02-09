@@ -8,7 +8,7 @@
  */
 const CONFIG = {
   ENV: 'development',
-  PORT: 3100,
+  PORT: 3000,
   BASE_URL: 'http://127.0.0.1',
   PREFIX: '/api',
   SECRET: {
@@ -17,10 +17,10 @@ const CONFIG = {
   },
   DATABASE: {
     DIALECT: 'mysql',
-    DB_NAME: 'appdb',
-    HOST: '127.0.0.1',
+    DB_NAME: 'db',
+    HOST: '47.119.172.215',
     PORT: 3306,
-    USER: 'root',
+    USER: 'dbtest',
     PASSWORD: '123456',
     TIMEZONE: '+08:00',
   },

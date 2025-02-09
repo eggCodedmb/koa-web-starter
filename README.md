@@ -4,31 +4,31 @@ This template-standard should help get you started developing with koa2 and Type
 
 ## Usage
 
-> If you are not using the `pnpm` tool, using `npm` and `yarn` are the same to achieve the same performance.
+> If you are not using the `yarn` tool, using `npm` and `yarn` are the same to achieve the same performance.
 
 1. install dependencies
 
    ```
-   $ pnpm install
+   $ yarn install
    ```
 
 2. start app
 
    ```dev
-   $ pnpm dev
+   $ yarn dev
    # please open in: http://127.0.0.1:3100/api/doc.html
    ```
 
 3. build project
 
    ```
-   $ pnpm build
+   $ yarn build
    ```
 
 4. run build
 
    ```
-   $ pnpm serve
+   $ yarn serve
    ```
 
 ## Project Layout
@@ -70,11 +70,11 @@ Generate content: model, service, API, and DTO files.
 1. pull project & install deps
 
    ```bash
-   pnpm create koa-web koa-web-generator --template generator
+   yarn create koa-web koa-web-generator --template generator
 
    cd ./koa-web-generator
 
-   pnpm install
+   yarn install
    ```
 
 2. Add the models you want to generate in `./src/index.ts`
@@ -112,7 +112,7 @@ Generate content: model, service, API, and DTO files.
 3. start generate
 
    ```bash
-   pnpm start
+   yarn start
    ```
 
 After generation is complete, you can get such as files in `./src(model | service | api | dto)`

@@ -10,22 +10,17 @@ class SequelizeClient {
   public enableStatus: boolean = false
 
   private constructor() {
-    const sequelizeClient = new Sequelize(
-      DATABASE.DB_NAME,
-      DATABASE.USER,
-      DATABASE.PASSWORD,
-      {
-        dialect: DATABASE.DIALECT as Dialect,
-        host: DATABASE.HOST,
-        port: DATABASE.PORT,
-        dialectOptions: {
-          dateStrings: true,
-          typeCast: true,
-        },
-        timezone: DATABASE.TIMEZONE,
-        logging: false,
+    const sequelizeClient = new Sequelize(DATABASE.DB_NAME, DATABASE.USER, DATABASE.PASSWORD, {
+      dialect: DATABASE.DIALECT as Dialect,
+      host: DATABASE.HOST,
+      port: DATABASE.PORT,
+      dialectOptions: {
+        dateStrings: true,
+        typeCast: true,
       },
-    )
+      timezone: DATABASE.TIMEZONE,
+      logging: false,
+    })
     sequelizeClient
       .authenticate()
       .then(() => {
@@ -60,9 +55,9 @@ class SequelizeClient {
   }
 
   // 同步模型
-  public async syncModel(){
+  public async syncModel() {
     await this.sequelizeClient?.sync({ alter: true })
-    console.log('同步所有模型');
+    console.log('同步所有模型')
   }
 }
 

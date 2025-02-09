@@ -14,5 +14,5 @@ if (enable) {
 export const initDB = enable
   ? () => Promise.all(allModel)
   : () => {
-      console.log('Unable to connect to the database')
+      console.log('数据库连接成功')
     }
