@@ -3,6 +3,7 @@ import Membership from './membership'
 import Order from './order'
 import OrderItem from './orderItem'
 import Product from './product'
+import Log from './log'
 
 // 关联关系：一个用户有一个会员信息
 User.hasOne(Membership, { foreignKey: 'userId' })
@@ -18,14 +19,14 @@ User.hasMany(Order, {
 Order.hasMany(OrderItem, {
   foreignKey: 'orderId',
   sourceKey: 'id',
-  onDelete: 'CASCADE', 
+  onDelete: 'CASCADE',
 })
 
 // 商品和订单项的一对多关系
 Product.hasMany(OrderItem, {
-  foreignKey: 'productId', 
+  foreignKey: 'productId',
   sourceKey: 'id',
-  onDelete: 'CASCADE', 
+  onDelete: 'CASCADE',
 })
 
-export { User, Membership }
+export { User, Membership, Log }

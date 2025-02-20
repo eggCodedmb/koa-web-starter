@@ -1,7 +1,6 @@
 import Koa from 'koa'
 import CONFIG from './config'
 import InitManager from '~/core/init'
-
 const app = new Koa()
 
 new InitManager(app)

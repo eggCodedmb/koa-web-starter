@@ -3,8 +3,6 @@ import type { IUserModel } from '../model/user'
 import { User } from '../model'
 import { Paging } from '../dto/base'
 import { decodeToken } from '~/core/auth'
-// 引入事务
-import { Transaction, Sequelize } from 'sequelize'
 import { createOneVip } from '../service/vip'
 
 export const createOne = async (newOne: IUserModel): Promise<User> => {

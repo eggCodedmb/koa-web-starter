@@ -12,11 +12,11 @@ import {
   updateOne,
   getOneByUsername,
 } from '~/app/service/user'
-import { createOneVip, getVIPById } from '~/app/service/vip'
+import { getVIPById } from '~/app/service/vip'
 import auth, { authAll } from '~/core/auth'
 import { encrypt, compare } from '~/core/encrypt/bcrypt'
 import { generateToken } from '~/core/auth'
-import { User } from '../model'
+import { DataTypes } from 'sequelize'
 const tag = tags(['user'])
 
 @prefix('/user')
@@ -123,8 +123,9 @@ export default class UserController {
   @tag
   @security([{ api_key: [] }])
   @path({
-    id: { type: 'number', required: true, default: null, description: 'id' },
+    id: { type: 'string', required: true, default: null, description: 'UUID' },
   })
+  @auth()
   async delete(ctx: Context) {
     const { id } = ctx.validatedParams
     await deleteById(id)

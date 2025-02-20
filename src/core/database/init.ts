@@ -11,8 +11,4 @@ if (enable) {
   }
 }
 
-export const initDB = enable
-  ? () => Promise.all(allModel)
-  : () => {
-      console.log('数据库连接成功')
-    }
+export const initDB = enable ? () => Promise.all(allModel) : () => {}

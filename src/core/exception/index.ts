@@ -1,5 +1,4 @@
 import type Koa from 'koa'
-import Logger from '../log'
 import { isNumber } from '../tool'
 import CODE from './exception-code'
 import { HttpException, Success } from './http-exception'
@@ -58,9 +57,9 @@ function logError(error: any, isHttpException: boolean) {
   if (isHttpException) {
     const code = `ERROR_CODE: ${getCode(error)}`
     const message = getMessage(error)
-    Logger.error('CUSTOM_EXCEPTION', code, message)
+    global.Logger.error('CUSTOM_EXCEPTION', code, message)
   } else {
-    Logger.error('SERVER_ERROR', error, 'unknown mistake')
+    global.Logger.error('SERVER_ERROR', error, 'unknown mistake')
   }
 }
 
