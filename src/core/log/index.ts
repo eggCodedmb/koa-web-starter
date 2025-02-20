@@ -6,6 +6,7 @@ import { isArray, isPlainObject } from '../tool'
 import logConfig from './log-config'
 import CONFIG from '~/config'
 import { createLog } from '~/app/service/log'
+import { info } from 'console'
 
 const ENV = CONFIG.ENV
 
@@ -96,6 +97,14 @@ const formatText = {
 
     return logText
   },
+
+  info: function (info: string) {
+    let logText = ''
+    logText += `\n!!!!!!!!!!!!!!!!!!!! INFO LOG BEGIN !!!!!!!!!!!!!!!!!!!!`
+    logText += `\n  [infoLog]: ${info}`
+    logText += `\n!!!!!!!!!!!!!!!!!!!! INFO LOG END !!!!!!!!!!!!!!!!!!!!\n`
+    return logText
+  },
 }
 
 export interface LoggerOptions {
@@ -103,6 +112,7 @@ export interface LoggerOptions {
   response: Function
   query: Function
   error: Function
+  info: Function
   [x: string]: any
 }
 
@@ -127,5 +137,8 @@ export const Logger: LoggerOptions = {
   /** sql error log */
   error: function (...arg: any) {
     errorLogger.error(formatText.error(...arg))
+  },
+  info: function (info: string) {
+    infoLogger.info(formatText.info(info))
   },
 }

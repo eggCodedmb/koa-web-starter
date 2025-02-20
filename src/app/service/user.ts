@@ -31,9 +31,8 @@ export const getById = async (id: number): Promise<User> => {
   return one!
 }
 
-export const getOneByUsername = async (username: string): Promise<User> => {
-  const one = await User.findOne({ where: { username } })
-  return one!
+export const getOneByUsername = async (username: string): Promise<User | null> => {
+  return await User.findOne({ where: { username } })
 }
 
 export const deleteById = async (id: number): Promise<boolean> => {

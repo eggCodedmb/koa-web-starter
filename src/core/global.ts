@@ -1,5 +1,5 @@
 import { UnifyResponse } from './exception/unify-response'
-import Logger from '../core/log'
+import { Logger } from '../core/log'
 class InitGlobal {
   constructor() {}
   init() {

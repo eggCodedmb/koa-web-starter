@@ -2,6 +2,7 @@ import type { Context } from 'koa'
 import { body, description, path, prefix, query, request, security, summary, tags } from 'koa-swagger-decorator'
 import { pagingSchema } from '~/app/dto/base'
 import { passwordSchema, userSchema } from '~/app/dto/user'
+import type { IUserModel } from '../model/user'
 import {
   createOne,
   curUser,
@@ -41,6 +42,7 @@ export default class UserController {
     if (!user) return global.UnifyResponse.notFoundException(20001)
     const isPassword = await compare(userData.password, user.password)
     if (!isPassword) return global.UnifyResponse.notFoundException(20001)
+    global.Logger.response(ctx, user)
     const vip = await getVIPById(user.id)
     const token = generateToken(user.id)
     ctx.body = { user, vip, token }
@@ -61,7 +63,7 @@ export default class UserController {
   @summary('Get user list')
   @description('example: /user/list')
   @tag
-  @auth(false)
+  @auth()
   async list(ctx: Context) {
     const list = await getList()
     ctx.body = { list }
@@ -72,7 +74,7 @@ export default class UserController {
   @description('example: /user/page')
   @tag
   @query(pagingSchema)
-  @auth(false)
+  @auth(true)
   async page(ctx: Context) {
     const paging = await getPage(ctx)
     ctx.body = { paging }
