@@ -1,5 +1,5 @@
 import type { Dialect } from 'sequelize'
-import { Sequelize } from 'sequelize'
+import { Sequelize, Transaction } from 'sequelize'
 import CONFIG from '~/config'
 
 const DATABASE = CONFIG.DATABASE
@@ -26,7 +26,7 @@ class SequelizeClient {
       .authenticate()
       .then((res) => {
         this.enableStatus = true
-        console.log('Message:数据库连接成功');
+        console.log('Message:数据库连接成功')
       })
       .catch((err) => {
         this.enableStatus = false
@@ -35,7 +35,6 @@ class SequelizeClient {
       })
 
     this.sequelizeClient = sequelizeClient
-
     // 同步模型
     this.syncModel()
   }
@@ -59,6 +58,14 @@ class SequelizeClient {
   public async syncModel() {
     await this.sequelizeClient?.sync({ alter: true })
     console.log('同步所有模型')
+  }
+
+  // 通过事务暴露transaction方法
+  public async startTransaction(): Promise<Transaction> {
+    if (!this.sequelizeClient) {
+      throw new Error('Sequelize client is not initialized')
+    }
+    return await this.sequelizeClient.transaction()
   }
 }
 

@@ -15,7 +15,7 @@ import {
  */
 export class UnifyResponse {
   /**
-   * Get success
+   * 获取成功
    * @param code errorCode
    * @param message errorCode message
    */
@@ -24,7 +24,7 @@ export class UnifyResponse {
   }
 
   /**
-   * Create Success
+   * 创建成功
    * @param code errorCode
    * @param message errorCode message
    */
@@ -33,7 +33,7 @@ export class UnifyResponse {
   }
 
   /**
-   * Update Success
+   * 更新成功
    * @param code errorCode
    * @param message errorCode message
    */
@@ -51,7 +51,7 @@ export class UnifyResponse {
   }
 
   /**
-   * Parameter Exception
+   * 参数错误
    * @param codeOrMessage errorCode | error message
    */
   parameterException(codeOrMessage: number | string) {
@@ -59,7 +59,7 @@ export class UnifyResponse {
   }
 
   /**
-   * Un Authenticated Exception
+   * 认证失败
    * @param code errorCode
    */
   unAuthenticatedException(code: number) {
@@ -67,7 +67,7 @@ export class UnifyResponse {
   }
 
   /**
-   * Forbidden Exception
+   * 权限不足
    * @param code errorCode
    */
   forbiddenException(code: number) {
@@ -75,7 +75,7 @@ export class UnifyResponse {
   }
 
   /**
-   * Not Found Exception
+   * 资源不存在
    * @param code errorCode
    */
   notFoundException(code: number) {
@@ -83,7 +83,7 @@ export class UnifyResponse {
   }
 
   /**
-   * server Error
+   * 服务器错误
    * @param codeOrMessage errorCode | error message
    */
   serverErrorException(codeOrMessage: number | string) {

@@ -2,7 +2,6 @@ import type { Context } from 'koa'
 import { body, description, path, prefix, query, request, security, summary, tags } from 'koa-swagger-decorator'
 import { pagingSchema } from '~/app/dto/base'
 import { passwordSchema, userSchema } from '~/app/dto/user'
-import type { IUserModel } from '../model/user'
 import {
   createOne,
   curUser,

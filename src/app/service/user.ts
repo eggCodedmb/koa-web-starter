@@ -4,15 +4,28 @@ import { User } from '../model'
 import { Paging } from '../dto/base'
 import { decodeToken } from '~/core/auth'
 import { createOneVip } from '../service/vip'
+import SequelizeClient from '~/core/database'
 
 export const createOne = async (newOne: IUserModel): Promise<User> => {
-  const one = await User.findOne({ where: { username: newOne.username } })
-  if (one) {
-    global.UnifyResponse.parameterException(10409)
+  const t = await SequelizeClient.startTransaction()
+  try {
+    const hashUser = await User.findOne({
+      where: { username: newOne.username },
+      transaction: t,
+    })
+
+    if (hashUser) {
+      global.UnifyResponse.parameterException(10409)
+    }
+    const user = await User.create(newOne, { transaction: t })
+    await createOneVip(user.id, t)
+    await t.commit()
+    return user
+  } catch (error) {
+    await t.rollback()
+    global.Logger.error(error)
+    throw error
   }
-  const user = await User.create(newOne)
-  await createOneVip(user.id)
-  return user
 }
 
 export const updateOne = async (newOne: IUserModel): Promise<User> => {
@@ -25,6 +38,8 @@ export const updateOne = async (newOne: IUserModel): Promise<User> => {
 
 export const getById = async (id: number): Promise<User> => {
   const one = await User.findByPk(id)
+  console.log(one);
+  
   if (!one) {
     global.UnifyResponse.notFoundException(10404)
   }
