@@ -7,7 +7,7 @@ new InitManager(app)
 
 app.listen(CONFIG.PORT, () => {
   console.log(
-    `Please open ${CONFIG.BASE_URL}:${CONFIG.PORT}${CONFIG.PREFIX}/doc.html`,
+    `API接口文档 ${CONFIG.BASE_URL}:${CONFIG.PORT}${CONFIG.PREFIX}/doc.html`,
   )
 })
 export default app

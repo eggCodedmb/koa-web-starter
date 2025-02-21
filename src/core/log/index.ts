@@ -1,12 +1,8 @@
-/**
- * Logger
- */
 import log4js from 'log4js'
 import { isArray, isPlainObject } from '../tool'
 import logConfig from './log-config'
 import CONFIG from '~/config'
 import { createLog } from '~/app/service/log'
-import { info } from 'console'
 
 const ENV = CONFIG.ENV
 
@@ -19,7 +15,7 @@ const errorLogger = log4js.getLogger('error')
 // format log text
 const formatText = {
   // request log
-  request: async function (ctx: any) {
+  request: function (ctx: any) {
     let logText = ''
     logText += `\n==================== REQUEST BEGIN ====================`
     logText += `\n[REQUEST LOG BEGIN]`
@@ -29,34 +25,17 @@ const formatText = {
     logText += `\n  [requestMethod]: ${ctx.method},`
     logText += `\n  [requestParameters]: ${JSON.stringify(ctx.data)}`
     logText += `\n[REQUEST LOG END]\n`
-
-    await createLog({
-      logType: 'request',
-      content: logText,
-      ip: ctx.ip,
-      url: ctx.url,
-      method: ctx.method,
-    })
     if (ENV === 'development') console.log(logText)
     return logText
   },
 
   // response log
-  response: async function (ctx: any, data?: any) {
+  response: function (ctx: any, data?: any) {
     let logText = ''
     logText += `\n[RESPONSE LOG BEGIN]`
     logText += `\n  [responseData]: ${JSON.stringify(data)}`
     logText += `\n[RESPONSE LOG END]`
     logText += `\n******************** RESPONSE END ********************\n`
-
-    await createLog({
-      logType: 'response',
-      content: logText,
-      ip: ctx.ip,
-      url: ctx.url,
-      method: ctx.method,
-    })
-
     if (ENV === 'development') console.log(logText)
     return logText
   },
@@ -69,17 +48,12 @@ const formatText = {
     logText += `\n  [SQL]: ${sql}`
     logText += `\n  [SQLData]: ${data}`
     logText += `\n[SQL QUERY LOG END]\n`
-
-    await createLog({
-      content: logText,
-      logType: 'query',
-    })
     if (ENV === 'development') console.log(logText)
     return logText
   },
 
   // 错误日志
-  error: async function (...arg: any) {
+  error: function (...arg: any) {
     let logText = ''
     logText += `\n!!!!!!!!!!!!!!!!!!!! ERROR LOG BEGIN !!!!!!!!!!!!!!!!!!!!`
     for (let i = 0, len = arg.length; i < len; i++) {
@@ -89,20 +63,18 @@ const formatText = {
       console.log(info)
     }
     logText += `\n!!!!!!!!!!!!!!!!!!!! ERROR LOG END !!!!!!!!!!!!!!!!!!!!\n`
-
-    await createLog({
-      logType: 'request',
-      content: logText,
-    })
-
     return logText
   },
 
-  info: function (info: string) {
-    let logText = ''
-    logText += `\n!!!!!!!!!!!!!!!!!!!! INFO LOG BEGIN !!!!!!!!!!!!!!!!!!!!`
-    logText += `\n  [infoLog]: ${info}`
-    logText += `\n!!!!!!!!!!!!!!!!!!!! INFO LOG END !!!!!!!!!!!!!!!!!!!!\n`
+  // info log
+  info: function (message: string, extra?: any) {
+    let logText = `\n[INFO LOG BEGIN]`
+    logText += `\n  [message]: ${message}`
+    if (extra) {
+      logText += `\n  [extra]: ${JSON.stringify(extra)}`
+    }
+    logText += `\n[INFO LOG END]\n`
+    if (ENV === 'development') console.log(logText)
     return logText
   },
 }
@@ -138,7 +110,9 @@ export const Logger: LoggerOptions = {
   error: function (...arg: any) {
     errorLogger.error(formatText.error(...arg))
   },
-  info: function (info: string) {
-    infoLogger.info(formatText.info(info))
+
+  /** info log */
+  info: function (message: string, extra?: any) {
+    infoLogger.info(formatText.info(message, extra))
   },
 }

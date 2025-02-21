@@ -3,8 +3,8 @@ import type { ILogModel } from '../model/log'
 import type { Context } from 'koa'
 import { Paging } from '../dto/base'
 // 保存日志
-export const createLog = async (data: ILogModel): Promise<Log> => {
-  return await Log.create(data)
+export const createLog = async (data: ILogModel):Promise<void> => {
+  await Log.create(data)
 }
 // 获取日志
 export const getLog = async (ctx: Context): Promise<Paging<Log>> => {

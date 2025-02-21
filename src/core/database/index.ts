@@ -24,9 +24,9 @@ class SequelizeClient {
     })
     sequelizeClient
       .authenticate()
-      .then(() => {
+      .then((res) => {
         this.enableStatus = true
-        global.Logger.info('数据库连接成功')
+        console.log('Message:数据库连接成功');
       })
       .catch((err) => {
         this.enableStatus = false

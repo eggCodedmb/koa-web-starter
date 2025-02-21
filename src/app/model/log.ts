@@ -4,7 +4,7 @@ import { BaseModel, baseFields, baseOptions } from './base'
 
 // 定义 ILogModel 接口，包含自动生成的字段
 export interface ILogModel extends IBaseModel {
-  logType: 'request' | 'error' | 'response' | 'query'
+  logType: 'request' | 'error' | 'response' | 'query' | 'info'
   content: string
   ip?: string
   userId?: string
@@ -13,11 +13,8 @@ export interface ILogModel extends IBaseModel {
   timestamp?: Date
 }
 
-// 用 Optional 类型排除自动生成的字段
-export interface ILogModelCreate extends Optional<ILogModel, 'id' | 'created_at' | 'updated_at' | 'deleted_at'> {}
-
 // 定义 Log 类并继承 BaseModel
-export default class Log extends BaseModel<ILogModel, ILogModelCreate> {}
+export default class Log extends BaseModel<ILogModel, ILogModel> {}
 
 // 初始化模型
 Log.init(
@@ -35,22 +32,22 @@ Log.init(
     },
     ip: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       comment: 'ip地址',
     },
     userId: {
       type: DataTypes.STRING,
-      allowNull: true,  // 这里可以修改为 true，如果允许 userId 为可选
+      allowNull: true,
       comment: '用户id',
     },
     method: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       comment: '请求方法',
     },
     url: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       comment: '请求地址',
     },
     timestamp: {
@@ -62,6 +59,6 @@ Log.init(
   },
   {
     tableName: 'log',
-    ...baseOptions,  // 这里是通用的数据库配置
+    ...baseOptions, // 这里是通用的数据库配置
   }
 )
