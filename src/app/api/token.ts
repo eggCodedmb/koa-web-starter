@@ -10,7 +10,7 @@ import {
 import { code2Session, userLogin } from '~/app/service/token'
 import { LOGIN_TYPE } from '~/app/shared/enum'
 
-const tag = tags(['token'])
+const tag = tags(['身份验证'])
 
 export const tokenSchema = {
   username: { type: 'string', required: true },
