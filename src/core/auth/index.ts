@@ -8,7 +8,7 @@ const CUR_REQUEST_METHOD = 'CUR_REQUEST_METHOD'
 type Cache = Record<string, unknown>
 const cache: Cache = {}
 const JWT_KEY: string = CONFIG.SECRET.JWT_KEY //安全密钥
-const EXPIRES_IN: number = +CONFIG.SECRET.EXPIRES_IN //过期时间
+const EXPIRES_IN = CONFIG.SECRET.EXPIRES_IN //过期时间
 
 function get<T>(cache: Cache, key: string): T | undefined {
   return cache[key] as T | undefined

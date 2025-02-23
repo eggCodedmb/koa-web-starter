@@ -24,23 +24,23 @@ const tag = tags(['user'])
 export default class UserController {
   /**
    * @security([{ api_key: [] }])
-   * In Swagger UI, it will be displayed as a lock icon that you can click to view and configure the required API key or OAuth2 token.
-   * If your API does not require security measures, `@security` can be omitted.
+   * 在 Swagger UI 中，将显示一个锁图标，您可以点击查看并配置所需的 API 密钥或 OAuth2 令牌。
+   * 如果您的 API 不需要安全措施，`@security` 可以省略。
    * @param ctx
    */
 
   @request('post', '/login')
-  @summary('User login')
-  @description('example: /user/login')
+  @summary('用户登录')
+  @description('示例：/user/login')
   @tag
   @body(userSchema)
   @auth(false)
   async login(ctx: Context) {
     const userData = ctx.validatedBody
     const user = await getOneByUsername(userData.username)
-    if (!user) return global.UnifyResponse.notFoundException(20001)
+    if (!user) return global.UnifyResponse.notFoundException(20001) // 用户未找到
     const isPassword = await compare(userData.password, user.password)
-    if (!isPassword) return global.UnifyResponse.notFoundException(20001)
+    if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
     global.Logger.response(ctx, user)
     const vip = await getVIPById(user.id)
     const token = generateToken(user.id)
@@ -48,8 +48,8 @@ export default class UserController {
   }
 
   @request('get', '/me')
-  @summary('Get user')
-  @description('example: /user/me')
+  @summary('获取当前用户信息')
+  @description('示例：/user/me')
   @tag
   @security([{ api_key: [] }])
   async me(ctx: Context) {
@@ -59,8 +59,8 @@ export default class UserController {
   }
 
   @request('get', '/list')
-  @summary('Get user list')
-  @description('example: /user/list')
+  @summary('获取用户列表')
+  @description('示例：/user/list')
   @tag
   @auth()
   async list(ctx: Context) {
@@ -69,8 +69,8 @@ export default class UserController {
   }
 
   @request('get', '/page')
-  @summary('Get user page')
-  @description('example: /user/page')
+  @summary('分页获取用户')
+  @description('示例：/user/page')
   @tag
   @query(pagingSchema)
   @auth(true)
@@ -80,12 +80,12 @@ export default class UserController {
   }
 
   @request('get', '/{id}/detail')
-  @summary('Get user detail')
-  @description('example: /user/1/detail')
+  @summary('获取用户详情')
+  @description('示例：/user/1/detail')
   @tag
   @security([{ api_key: [] }])
   @path({
-    id: { type: 'number', required: true, default: null, description: 'id' },
+    id: { type: 'string', required: true, default: null, description: '用户ID' },
   })
   async detail(ctx: Context) {
     const { id } = ctx.validatedParams
@@ -94,8 +94,8 @@ export default class UserController {
   }
 
   @request('post', '')
-  @summary('create user')
-  @description('example: /user')
+  @summary('创建用户')
+  @description('示例：/user')
   @tag
   @security([{ api_key: [] }])
   @body(userSchema)
@@ -107,8 +107,8 @@ export default class UserController {
   }
 
   @request('put', '')
-  @summary('modify user')
-  @description('example: /user')
+  @summary('修改用户信息')
+  @description('示例：/user')
   @tag
   @security([{ api_key: [] }])
   @body(passwordSchema)
@@ -119,12 +119,12 @@ export default class UserController {
   }
 
   @request('delete', '/{id}')
-  @summary('delete user')
-  @description('example: /user/1')
+  @summary('删除用户')
+  @description('示例：/user/1')
   @tag
   @security([{ api_key: [] }])
   @path({
-    id: { type: 'string', required: true, default: null, description: 'UUID' },
+    id: { type: 'string', required: true, default: null, description: '用户ID' },
   })
   @auth()
   async delete(ctx: Context) {

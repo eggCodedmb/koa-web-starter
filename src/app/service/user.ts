@@ -38,8 +38,6 @@ export const updateOne = async (newOne: IUserModel): Promise<User> => {
 
 export const getById = async (id: number): Promise<User> => {
   const one = await User.findByPk(id)
-  console.log(one);
-  
   if (!one) {
     global.UnifyResponse.notFoundException(10404)
   }

@@ -16,18 +16,19 @@ User.init(
     ...baseFields,
     username: {
       type: DataTypes.STRING(10),
-      allowNull: true,
+      allowNull: false,
       comment: '用户账号',
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       comment: '用户密码',
     },
     nickname: {
       type: DataTypes.STRING(20),
       allowNull: true,
       comment: '用户名称',
+      defaultValue: '用户' + Math.floor(Math.random() * 1000),
     },
     avatar: {
       type: DataTypes.STRING(255),

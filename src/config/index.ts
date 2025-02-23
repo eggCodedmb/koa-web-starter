@@ -24,9 +24,7 @@ const CONFIG = {
     PASSWORD: '123456',
     TIMEZONE: '+08:00',
   },
-  REDIS: {
-
-  }
+  REDIS: {},
 }
 
 export default CONFIG
