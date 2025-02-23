@@ -14,8 +14,8 @@ Role.init(
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
       comment: '角色名称',
+      unique: true,
     },
     description: {
       type: DataTypes.STRING(100),

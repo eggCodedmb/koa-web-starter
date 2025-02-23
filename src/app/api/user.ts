@@ -16,8 +16,8 @@ import { getVIPById } from '~/app/service/vip'
 import auth, { authAll } from '~/core/auth'
 import { encrypt, compare } from '~/core/encrypt/bcrypt'
 import { generateToken } from '~/core/auth'
-import { DataTypes } from 'sequelize'
-const tag = tags(['user'])
+
+const tag = tags(['用户管理'])
 
 @prefix('/user')
 @authAll

@@ -9,6 +9,7 @@ import UserRole from './user-role'
 import Permission from './permission'
 import RolePermission from './role-permission'
 import Menu from './menu'
+import RoleMenu from './role-menu'
 
 // 关联关系：一个用户有一个会员信息
 User.hasOne(Membership, { foreignKey: 'userId' })
@@ -39,12 +40,12 @@ Product.hasMany(OrderItem, {
 User.belongsToMany(Role, {
   through: UserRole, // 中间表
   foreignKey: 'userId', // 用户的外键
-  otherKey: 'roleId',   // 角色的外键
+  otherKey: 'roleId', // 角色的外键
 })
 Role.belongsToMany(User, {
   through: UserRole, // 中间表
-  foreignKey: 'roleId',  // 角色的外键
-  otherKey: 'userId',    // 用户的外键
+  foreignKey: 'roleId', // 角色的外键
+  otherKey: 'userId', // 用户的外键
 })
 
 //一个角色可以拥有多个权限（多对多的关系）
@@ -71,4 +72,23 @@ Menu.belongsToMany(Role, {
   otherKey: 'roleId',
 })
 
-export { User, Membership, Order, OrderItem, Product, Log, Role, UserRole, Permission, RolePermission, Menu}
+// 定义 UserRole 和 Role 之间的关联
+UserRole.belongsTo(User, { foreignKey: 'userId' })
+UserRole.belongsTo(Role, { foreignKey: 'roleId' })
+
+// 定义 RolePermission 和 Role 之间的关联
+RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
+RolePermission.belongsTo(Permission, { foreignKey: 'permissionId' })
+
+// 定义 RolePermission 和 Menu 之间的关联
+RolePermission.belongsTo(Menu, { foreignKey: 'menuId' })
+RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
+
+// 定义 RolePermission 和 Permission 之间的关联
+RolePermission.belongsTo(Permission, { foreignKey: 'permissionId' })
+RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
+
+RoleMenu.belongsTo(Role, { foreignKey: 'roleId' })
+RoleMenu.belongsTo(Menu, { foreignKey: 'menuId' })
+
+export { User, Membership, Order, OrderItem, Product, Log, Role, UserRole, Permission, RolePermission, Menu, RoleMenu }

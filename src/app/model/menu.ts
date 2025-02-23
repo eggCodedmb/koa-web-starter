@@ -5,7 +5,8 @@ export interface IMenuModel {
   name: string;
   path: string;
   icon?: string;
-  parentId?: string; // 父菜单ID，用于实现菜单层级结构
+  parentId?: string;
+  component: string;
 }
 
 export default class Menu extends BaseModel<IMenuModel, IMenuModel> {}
@@ -27,6 +28,11 @@ Menu.init(
       type: DataTypes.STRING(50),
       allowNull: true,
       comment: '菜单图标',
+    },
+    component: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: '菜单组件',
     },
     parentId: {
       type: DataTypes.UUID,

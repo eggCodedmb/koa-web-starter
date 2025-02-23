@@ -36,7 +36,7 @@ class SequelizeClient {
 
     this.sequelizeClient = sequelizeClient
     // 同步模型
-    this.syncModel()
+    // this.syncModel()
   }
 
   public static getInstance() {

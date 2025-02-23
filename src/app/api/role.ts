@@ -1,12 +1,19 @@
 import { Context } from 'koa'
 import { body, description, path, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import { assignRolesToUser, getRolesByUserId, createRole } from '~/app/service/role'
-import { userRoleSchema, roleSchema } from '~/app/dto/role'
+import { assignMenusToRole } from '~/app/service/menu'
+import { assignPermissionsToRole } from '~/app/service/permission'
+import {
+  userRoleSchema,
+  roleSchema,
+  rolePermissionSchema,
+  roleMenuSchema,
+} from '~/app/dto/role'
 import auth from '~/core/auth'
 
-const tag = tags(['role'])
+const tag = tags(['角色管理'])
 
-@prefix('/user')
+@prefix('/role')
 export default class UserRoleController {
   // 创建角色
   @request('post', '/create')
@@ -21,6 +28,7 @@ export default class UserRoleController {
     ctx.body = { result: role }
   }
 
+  // 分配角色
   @request('post', '/roles')
   @summary('为用户分配角色')
   @description('为用户分配一个或多个角色')
@@ -28,15 +36,15 @@ export default class UserRoleController {
   @body(userRoleSchema)
   @auth()
   async assignRoles(ctx: Context) {
-    const { roleIds,userId } = ctx.validatedBody
+    const { roleIds, userId } = ctx.validatedBody
 
     // 调用为用户分配角色的服务
     await assignRolesToUser(userId, roleIds)
-
-    // 返回成功消息
-    ctx.body = { message: '成功为用户分配角色' }
+    // 返回成功信息
+    global.UnifyResponse.createSuccess({ message: '成功为用户分配角色' })
   }
 
+  // 获取用户角色
   @request('get', '/{userId}/roles')
   @summary('获取用户角色')
   @description('获取用户被分配的角色')
@@ -49,4 +57,18 @@ export default class UserRoleController {
     const roles = await getRolesByUserId(userId)
     ctx.body = { roles }
   }
+
+  // 分配菜单
+  @request('post', '/menus')
+  @summary('Assign menus to role')
+  @description('Assign one or more menus to a role.')
+  @tag
+  @body(roleMenuSchema)
+  async assignMenus(ctx: Context) {
+    const { menuIds, roleId } = ctx.validatedBody
+    await assignMenusToRole(roleId, menuIds)
+    ctx.body = { code: global.SUCCESS_CODE, message: 'Menus assigned successfully' }
+  }
+
+
 }
