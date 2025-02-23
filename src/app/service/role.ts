@@ -5,8 +5,8 @@ import type { IRoleModel } from '~/app/model/role'
  * 创建角色
  * @param data 角色数据
  */
-export const createRole = async (data: IRoleModel) => {
-  await Role.create(data)
+export const createRole = async (data: IRoleModel): Promise<Role> => {
+  return await Role.create(data)
 }
 
 /**

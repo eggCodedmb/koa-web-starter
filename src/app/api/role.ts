@@ -3,12 +3,7 @@ import { body, description, path, prefix, request, summary, tags } from 'koa-swa
 import { assignRolesToUser, getRolesByUserId, createRole } from '~/app/service/role'
 import { assignMenusToRole } from '~/app/service/menu'
 import { assignPermissionsToRole } from '~/app/service/permission'
-import {
-  userRoleSchema,
-  roleSchema,
-  rolePermissionSchema,
-  roleMenuSchema,
-} from '~/app/dto/role'
+import { userRoleSchema, roleSchema, rolePermissionSchema, roleMenuSchema } from '~/app/dto/role'
 import auth from '~/core/auth'
 
 const tag = tags(['角色管理'])
@@ -24,8 +19,8 @@ export default class UserRoleController {
   @auth()
   async createRole(ctx: Context) {
     // 调用创建角色的服务
-    const role = await createRole(ctx.validatedBody)
-    ctx.body = { result: role }
+    await createRole(ctx.validatedBody)
+    global.UnifyResponse.createSuccess({ message: '创建成功' })
   }
 
   // 分配角色
@@ -60,15 +55,13 @@ export default class UserRoleController {
 
   // 分配菜单
   @request('post', '/menus')
-  @summary('Assign menus to role')
-  @description('Assign one or more menus to a role.')
+  @summary('分配菜单给角色')
+  @description('分配一个菜单或者多个菜单给角色')
   @tag
   @body(roleMenuSchema)
   async assignMenus(ctx: Context) {
     const { menuIds, roleId } = ctx.validatedBody
     await assignMenusToRole(roleId, menuIds)
-    ctx.body = { code: global.SUCCESS_CODE, message: 'Menus assigned successfully' }
+    ctx.body = { message: '菜单分配成功' }
   }
-
-
 }
