@@ -1,7 +1,7 @@
 import { Context } from 'koa'
-import { body, description, path, prefix, request, summary, tags } from 'koa-swagger-decorator'
-import { MenuSchemaProps } from '~/app/dto/menu'
-
+import { body, description, path, prefix, request, summary, tags, query } from 'koa-swagger-decorator'
+import { MenuSchemaProps, MenuSchemaQueryProps } from '~/app/dto/menu'
+import { createMenu, getMenuList, getMenuAll } from '~/app/service/menu'
 const tag = tags(['菜单管理'])
 @prefix('/menu')
 export default class menuController {
@@ -11,14 +11,26 @@ export default class menuController {
   @tag
   @description('创建菜单')
   @body(MenuSchemaProps)
-  public static async createMenu(ctx: Context) {}
+  public static async createMenu(ctx: Context) {
+    await createMenu(ctx.validatedBody)
+    global.UnifyResponse.createSuccess({ message: '创建成功' })
+  }
 
   // 获取菜单
   @request('get', '/get')
   @summary('获取菜单')
   @tag
   @description('获取菜单')
-  public static async getMenu(ctx: Context) {}
+  @query(MenuSchemaQueryProps)
+  public static async getMenu(ctx: Context) {
+    const { roleIds } = ctx.validatedQuery
+    const menus = await getMenuList(roleIds)
+    ctx.body = {
+      code: 0,
+      message: '获取成功',
+      result: menus,
+    }
+  }
 
   // 删除菜单
   @request('delete', '/delete')
@@ -42,4 +54,21 @@ export default class menuController {
     ...MenuSchemaProps,
   })
   public static async updateMenu(ctx: Context) {}
+
+  /**
+   * 获取所有菜单
+   * @param ctx
+   */
+  @request('get', '/all')
+  @summary('获取所有菜单')
+  @tag
+  @description('获取所有菜单')
+  public static async getMenuAll(ctx: Context) {
+    const menus = await getMenuAll()
+    ctx.body = {
+      code: 0,
+      message: '获取成功',
+      result: menus,
+    }
+  }
 }

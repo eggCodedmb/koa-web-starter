@@ -1,12 +1,20 @@
-import { DataTypes } from 'sequelize';
-import { BaseModel, baseFields, baseOptions } from './base';
+import { DataTypes } from 'sequelize'
+import { BaseModel, baseFields, baseOptions } from './base'
 
 export interface IMenuModel {
-  name: string;
-  path: string;
-  icon?: string;
-  parentId?: string;
-  component: string;
+  id: string
+  name: string
+  path: string
+  icon?: string
+  component: string
+  hideInMenu: boolean
+  parentId?: string
+  order?: number
+  type?: 'menu' | 'button'
+}
+
+export interface MenuTree extends IMenuModel {
+  children?: MenuTree[]
 }
 
 export default class Menu extends BaseModel<IMenuModel, IMenuModel> {}
@@ -25,7 +33,7 @@ Menu.init(
       comment: '菜单路径',
     },
     icon: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(255),
       allowNull: true,
       comment: '菜单图标',
     },
@@ -39,9 +47,27 @@ Menu.init(
       allowNull: true,
       comment: '父级菜单ID',
     },
+    order: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: '菜单排序',
+      defaultValue: 0,
+    },
+    type: {
+      type: DataTypes.ENUM('menu', 'button'),
+      allowNull: true,
+      comment: '菜单类型，menu为菜单，button为按钮',
+      defaultValue: 'menu',
+    },
+    hideInMenu: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      comment: '是否在菜单中隐藏',
+      defaultValue: false,
+    },
   },
   {
     tableName: 'menu',
     ...baseOptions,
   }
-);
+)

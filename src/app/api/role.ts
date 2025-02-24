@@ -1,6 +1,6 @@
 import { Context } from 'koa'
 import { body, description, path, prefix, request, summary, tags } from 'koa-swagger-decorator'
-import { assignRolesToUser, getRolesByUserId, createRole } from '~/app/service/role'
+import { assignRolesToUser, getRolesByUserId, createRole, getRolesAll } from '~/app/service/role'
 import { assignMenusToRole } from '~/app/service/menu'
 import { assignPermissionsToRole } from '~/app/service/permission'
 import { userRoleSchema, roleSchema, rolePermissionSchema, roleMenuSchema } from '~/app/dto/role'
@@ -16,7 +16,6 @@ export default class UserRoleController {
   @description('创建一个新的角色')
   @tag
   @body(roleSchema)
-  @auth()
   async createRole(ctx: Context) {
     // 调用创建角色的服务
     await createRole(ctx.validatedBody)
@@ -29,7 +28,6 @@ export default class UserRoleController {
   @description('为用户分配一个或多个角色')
   @tag
   @body(userRoleSchema)
-  @auth()
   async assignRoles(ctx: Context) {
     const { roleIds, userId } = ctx.validatedBody
 
@@ -62,6 +60,20 @@ export default class UserRoleController {
   async assignMenus(ctx: Context) {
     const { menuIds, roleId } = ctx.validatedBody
     await assignMenusToRole(roleId, menuIds)
-    ctx.body = { message: '菜单分配成功' }
+    ctx.body = { code: 0, message: '菜单分配成功' }
+  }
+
+  // 查询所有角色
+  @request('get', '/all')
+  @summary('查询所有角色')
+  @description('查询所有角色')
+  @tag
+  @path({
+    name: { type: 'string', required: false, description: '角色名称' },
+  })
+  async getAllRoles(ctx: Context) {
+    const { name } = ctx.validatedQuery
+    const roles = await getRolesAll(name)
+    ctx.body = { code: 0, message: '查询成功', result: roles }
   }
 }

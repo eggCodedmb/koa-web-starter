@@ -6,7 +6,8 @@ export interface IRoleMenu {
   menuId: string // 菜单ID
 }
 
-export default class RoleMenu extends BaseModel<IRoleMenu, IRoleMenu> {}
+export default class RoleMenu extends BaseModel<IRoleMenu, IRoleMenu> {
+}
 
 RoleMenu.init(
   {

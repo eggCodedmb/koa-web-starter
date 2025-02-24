@@ -36,15 +36,13 @@ export default class UserController {
   @body(userSchema)
   @auth(false)
   async login(ctx: Context) {
-    const userData = ctx.validatedBody
-    const user = await getOneByUsername(userData.username)
+    const {username, password} = ctx.validatedBody
+    const user = await getOneByUsername(username)
     if (!user) return global.UnifyResponse.notFoundException(20001) // 用户未找到
-    const isPassword = await compare(userData.password, user.password)
+    const isPassword = await compare(password, user.password)
     if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
-    global.Logger.response(ctx, user)
-    const vip = await getVIPById(user.id)
     const token = generateToken(user.id)
-    ctx.body = { user, vip, token }
+    ctx.body = { user, token }
   }
 
   @request('get', '/me')

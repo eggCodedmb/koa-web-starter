@@ -1,5 +1,6 @@
 import { Role, UserRole } from '~/app/model'
 import type { IRoleModel } from '~/app/model/role'
+import { Op } from 'sequelize'
 
 /**
  * 创建角色
@@ -50,4 +51,19 @@ export const getRolesByUserId = async (userId: string) => {
   const roles = userRoles.map((userRole) => userRole.Role)
 
   return roles
+}
+
+/**
+ * 获取所有角色
+ * @returns 角色列表
+ * */
+export const getRolesAll = async (name: string): Promise<Role[]> => {
+  return await Role.findAll({
+    where: {
+      name: {
+        [Op.like]: `%${name}%`,
+      },
+    },
+    attributes: ['id', 'name', 'description'],
+  })
 }
