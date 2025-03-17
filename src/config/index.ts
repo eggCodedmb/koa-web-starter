@@ -25,6 +25,12 @@ const CONFIG = {
     TIMEZONE: '+08:00',
   },
   REDIS: {},
+  UPLOADFILE: {
+    UPLOAD_DIR: 'public/upload',
+    MAXSIZE: 1024 * 1024 * 1024,
+    MAXCOUNT: 5,
+    TYPE: ['image/png', 'image/jpeg', 'application/pdf', 'application/zip'],
+  },
 }
 
 export default CONFIG

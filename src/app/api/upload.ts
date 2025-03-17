@@ -1,29 +1,19 @@
 import type { Context } from 'koa'
-import { body, description, path, prefix, query, request, security, summary, tags } from 'koa-swagger-decorator'
+import { body, description, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import auth, { authAll } from '~/core/auth'
-import { uploadFile, validateFiles } from '~/utils/locaUpload'
+import { uploadFile, validateFiles, File } from '~/utils/locaUpload'
 import { FileLimitExceededError, InvalidFileTypeError } from '~/core/exception/fileErrors'
-import fs from 'fs'
+import CONFIG from '~/config'
 
 const tag = tags(['文件上传'])
 
 @prefix('/file')
-@authAll
+@authAll // 需要登录
 export default class UploadController {
-  /**
-   * 文件上传接口
-   * @swagger
-   * security:
-   *   - api_key: []
-   * consumes:
-   *   - multipart/form-data
-   */
   @request('post', '/upload')
   @summary('安全文件上传接口')
   @description(`
-    支持格式：PNG/JPG/PDF/ZIP
-    最大文件大小：10MB
-    批量限制：最多5个文件
+    支持多文件上传，文件大小限制为10MB，文件类型限制为png、jpg、pdf、zip
   `)
   @tag
   @body({
@@ -44,14 +34,24 @@ export default class UploadController {
     try {
       const files = ctx.request.files
       let fileList: File[] = []
+      
+      if (!files) {
+        return (ctx.body = {
+          code: 400,
+          message: '请上传文件',
+        })
+      }
       Object.keys(files).forEach((key) => {
         fileList = fileList.concat(files[key])
       })
 
-      validateFiles(fileList, {
-        maxCount: 5,
-        maxSize: 10 * 1024 * 1024,
-        allowedTypes: ['image/png', 'image/jpeg', 'application/pdf', 'application/zip'],
+      const allowedTypes = CONFIG.UPLOADFILE.TYPE
+      const maxCount = CONFIG.UPLOADFILE.MAXCOUNT
+      const maxSize = CONFIG.UPLOADFILE.MAXSIZE
+      await validateFiles(fileList, {
+        maxCount,
+        maxSize,
+        allowedTypes,
       })
 
       const result = await uploadFile(fileList)
@@ -62,32 +62,16 @@ export default class UploadController {
         message: '文件上传成功',
       }
     } catch (error) {
-      if (ctx.request.files) {
-        await cleanupTempFiles(ctx.request.files)
-      }
-      // 特殊错误处理
       if (error instanceof FileLimitExceededError) {
         ctx.status = 413
-        ctx.body = { code: 413, error: error.message }
+        ctx.body = { code: 413, message: error.message }
       } else if (error instanceof InvalidFileTypeError) {
         ctx.status = 415
-        ctx.body = { code: 415, error: error.message }
+        ctx.body = { code: 415, message: error.message }
       } else {
         ctx.status = 500
-        ctx.body = { code: 500, error: '文件上传服务不可用' }
+        ctx.body = { code: 500, message: '文件上传服务不可用' }
       }
     }
   }
-}
-
-// 临时文件清理函数
-async function cleanupTempFiles(files: any) {
-  const fileList = Array.isArray(files) ? files : [files]
-  await Promise.all(
-    fileList.map(async (file) => {
-      if (file.filepath) {
-        await fs.promises.unlink(file.filepath).catch(() => {})
-      }
-    })
-  )
 }

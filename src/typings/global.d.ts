@@ -14,4 +14,20 @@ declare global {
   var Logger: LoggerOptions
 }
 
-export {}
+interface UploadResult {
+  originalName?: string
+  fileName: string
+  url: string
+  size: number
+  mimetype: string | null
+  filePath: string
+}
+
+interface File {
+  originalFilename: string | null
+  size: number
+  mimetype: string | null
+  filepath: string
+}
+
+export { UploadResult, File }
