@@ -26,7 +26,7 @@ const CONFIG = {
   },
   REDIS: {},
   UPLOADFILE: {
-    UPLOAD_DIR: 'public/upload',
+    UPLOAD_DIR: 'public/uploads/',
     MAXSIZE: 1024 * 1024 * 1024,
     MAXCOUNT: 5,
     TYPE: ['image/png', 'image/jpeg', 'application/pdf', 'application/zip'],

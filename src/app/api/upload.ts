@@ -1,10 +1,10 @@
 import type { Context } from 'koa'
 import { body, description, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import auth, { authAll } from '~/core/auth'
-import { uploadFile, validateFiles, File } from '~/utils/locaUpload'
+import { uploadFile, validateFiles } from '~/utils/locaUpload'
 import { FileLimitExceededError, InvalidFileTypeError } from '~/core/exception/fileErrors'
 import CONFIG from '~/config'
-
+import { File } from '~/typings/global'
 const tag = tags(['文件上传'])
 
 @prefix('/file')
@@ -34,7 +34,7 @@ export default class UploadController {
     try {
       const files = ctx.request.files
       let fileList: File[] = []
-      
+
       if (!files) {
         return (ctx.body = {
           code: 400,
