@@ -3,6 +3,17 @@ import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs/promises'
 import { FileLimitExceededError, InvalidFileTypeError } from '~/core/exception/fileErrors'
 import { UploadResult, File } from '~/typings/global'
+import serve from 'koa-static'
+
+export function staticServer() {
+  // 获取当前日期
+  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+  const pathName = path.resolve(process.cwd(), 'public', 'uploads', today) // 确保路径正确
+
+  console.log(`静态资源目录: ${pathName}`)
+
+  return serve(pathName) // 返回静态服务中间件
+}
 
 // 安全上传函数
 export async function uploadFile(files: File[]): Promise<UploadResult[]> {
@@ -43,7 +54,7 @@ async function processSingleFile(file: File, uploadDir: string): Promise<UploadR
   return {
     originalName,
     fileName,
-    url: `/uploads/${path.basename(uploadDir)}/${fileName}`,
+    url: `/${path.basename(uploadDir)}/${fileName}`,
     size: file.size,
     mimetype: file.mimetype,
     filePath,

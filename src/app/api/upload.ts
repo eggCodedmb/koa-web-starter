@@ -8,10 +8,10 @@ import { File } from '~/typings/global'
 const tag = tags(['文件上传'])
 
 @prefix('/file')
-@authAll // 需要登录
+@authAll
 export default class UploadController {
   @request('post', '/upload')
-  @summary('安全文件上传接口')
+  @summary('文件上传接口')
   @description(`
     支持多文件上传，文件大小限制为10MB，文件类型限制为png、jpg、pdf、zip
   `)
@@ -55,10 +55,16 @@ export default class UploadController {
       })
 
       const result = await uploadFile(fileList)
+      const data = result.map((item) => {
+        return {
+          ...item,
+          filePath: '',
+        }
+      })
 
       ctx.body = {
         code: 200,
-        result: result,
+        result: data,
         message: '文件上传成功',
       }
     } catch (error) {
