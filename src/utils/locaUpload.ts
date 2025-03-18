@@ -23,12 +23,8 @@ export async function uploadFile(files: File[]): Promise<UploadResult[]> {
   )
 }
 
-function getUploadDir() {
-  return path.join(
-    process.cwd(),
-    'public/uploads',
-    new Date().toISOString().split('T')[0] // 按日期分目录
-  )
+export function getUploadDir(dirPath: string = 'public/uploads') {
+  return path.join(process.cwd(), 'public/uploads', new Date().toISOString().split('T')[0])
 }
 
 async function ensureDir(dirPath: string) {
@@ -92,7 +88,7 @@ export async function validateFiles(
     if (!file.mimetype) {
       return []
     }
-    
+
     if (options.noTypeCheck) {
       if (!options.allowedTypes.includes(file.mimetype)) {
         const message = `不支持的文件类型：${file.mimetype}，允许的类型为：${options.allowedTypes.join(', ')}`

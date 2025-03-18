@@ -2,7 +2,7 @@ import type { Context } from 'koa'
 import { body, description, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import auth, { authAll } from '~/core/auth'
 import { uploadFile, validateFiles } from '~/utils/locaUpload'
-import uploadChunk from '~/utils/uploadChunk'
+import { uploadChunk, fileMerge } from '~/utils/uploadChunk'
 import { FileLimitExceededError, InvalidFileTypeError } from '~/core/exception/fileErrors'
 import CONFIG from '~/config'
 import { File } from '~/typings/global'
@@ -88,7 +88,7 @@ export default class UploadController {
   async uploadChunk(ctx: Context) {
     try {
       const file = ctx.request.files?.file as File
-    
+
       const path = CONFIG.UPLOADFILE.UPLOAD_TEMP
 
       const res = await uploadChunk(file, path)
@@ -103,6 +103,31 @@ export default class UploadController {
       ctx.body = {
         code: 500,
         message: '文件分片上传失败',
+      }
+    }
+  }
+
+  @request('post', '/mergeChunk')
+  @summary('文件分片合并接口')
+  @description('')
+  @body({})
+  @tag
+  async mergeChunk(ctx: Context) {
+    try {
+      const path = CONFIG.UPLOADFILE.UPLOAD_TEMP
+      const name = ctx.request.body.name as string
+      const res = await fileMerge(name, path)
+      ctx.body = {
+        code: 200,
+        message: '文件合并成功',
+        result: res,
+      }
+    } catch (error) {
+      console.log(error)
+
+      ctx.body = {
+        code: 500,
+        message: '文件合并失败',
       }
     }
   }
