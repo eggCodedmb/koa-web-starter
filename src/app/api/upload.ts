@@ -2,19 +2,18 @@ import type { Context } from 'koa'
 import { body, description, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import auth, { authAll } from '~/core/auth'
 import { uploadFile, validateFiles } from '~/utils/locaUpload'
+import uploadChunk from '~/utils/uploadChunk'
 import { FileLimitExceededError, InvalidFileTypeError } from '~/core/exception/fileErrors'
 import CONFIG from '~/config'
 import { File } from '~/typings/global'
 const tag = tags(['文件上传'])
 
 @prefix('/file')
-@authAll
+// @authAll
 export default class UploadController {
   @request('post', '/upload')
   @summary('文件上传接口')
-  @description(`
-    支持多文件上传，文件大小限制为10MB，文件类型限制为png、jpg、pdf、zip
-  `)
+  @description('支持多文件上传')
   @tag
   @body({
     properties: {
@@ -29,7 +28,6 @@ export default class UploadController {
     },
     required: ['files'],
   })
-  @auth()
   async upload(ctx: Context) {
     try {
       const files = ctx.request.files
@@ -52,6 +50,7 @@ export default class UploadController {
         maxCount,
         maxSize,
         allowedTypes,
+        noTypeCheck: CONFIG.UPLOADFILE.NO_TYPE_CHECK,
       })
 
       const result = await uploadFile(fileList)
@@ -77,6 +76,33 @@ export default class UploadController {
       } else {
         ctx.status = 500
         ctx.body = { code: 500, message: '文件上传服务不可用' }
+      }
+    }
+  }
+
+  @request('post', '/uploadChunk')
+  @summary('文件分片上传接口')
+  @description('支持多文件上传')
+  @body({})
+  @tag
+  async uploadChunk(ctx: Context) {
+    try {
+      const file = ctx.request.files?.file as File
+    
+      const path = CONFIG.UPLOADFILE.UPLOAD_TEMP
+
+      const res = await uploadChunk(file, path)
+      ctx.body = {
+        code: 200,
+        message: '文件分片上传成功',
+        result: res,
+      }
+    } catch (error) {
+      console.log(error)
+
+      ctx.body = {
+        code: 500,
+        message: '文件分片上传失败',
       }
     }
   }

@@ -27,9 +27,11 @@ const CONFIG = {
   REDIS: {},
   UPLOADFILE: {
     UPLOAD_DIR: 'public/uploads/',
-    MAXSIZE: 1024 * 1024 * 1024,
+    UPLOAD_TEMP: 'public/uploads/temp/',
+    MAXSIZE: 1024 * 1024 * 1024, // 1G
     MAXCOUNT: 5,
     TYPE: ['image/png', 'image/jpeg', 'application/pdf', 'application/zip'],
+    NO_TYPE_CHECK: false, // true:校验文件类型 false:不校验文件类型
   },
 }
 

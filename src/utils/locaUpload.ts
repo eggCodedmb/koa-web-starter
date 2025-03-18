@@ -3,17 +3,6 @@ import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs/promises'
 import { FileLimitExceededError, InvalidFileTypeError } from '~/core/exception/fileErrors'
 import { UploadResult, File } from '~/typings/global'
-import serve from 'koa-static'
-
-export function staticServer() {
-  // 获取当前日期
-  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
-  const pathName = path.resolve(process.cwd(), 'public', 'uploads', today) // 确保路径正确
-
-  console.log(`静态资源目录: ${pathName}`)
-
-  return serve(pathName) // 返回静态服务中间件
-}
 
 // 安全上传函数
 export async function uploadFile(files: File[]): Promise<UploadResult[]> {
@@ -88,6 +77,7 @@ export async function validateFiles(
     maxCount: number
     maxSize: number
     allowedTypes: string[]
+    noTypeCheck?: boolean
   }
 ): Promise<File[]> {
   // 数量验证
@@ -102,9 +92,12 @@ export async function validateFiles(
     if (!file.mimetype) {
       return []
     }
-    if (!options.allowedTypes.includes(file.mimetype)) {
-      const message = `不支持的文件类型：${file.mimetype}，允许的类型为：${options.allowedTypes.join(', ')}`
-      throw new InvalidFileTypeError(message)
+    
+    if (options.noTypeCheck) {
+      if (!options.allowedTypes.includes(file.mimetype)) {
+        const message = `不支持的文件类型：${file.mimetype}，允许的类型为：${options.allowedTypes.join(', ')}`
+        throw new InvalidFileTypeError(message)
+      }
     }
 
     // 大小验证
