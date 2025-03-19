@@ -15,19 +15,7 @@ export default class UploadController {
   @summary('文件上传接口')
   @description('支持多文件上传')
   @tag
-  @body({
-    properties: {
-      files: {
-        type: 'array',
-        items: {
-          type: 'string',
-          format: 'binary',
-        },
-        description: '支持多文件上传',
-      },
-    },
-    required: ['files'],
-  })
+  @body({})
   async upload(ctx: Context) {
     try {
       const files = ctx.request.files
@@ -98,8 +86,6 @@ export default class UploadController {
         result: res,
       }
     } catch (error) {
-      console.log(error)
-
       ctx.body = {
         code: 500,
         message: '文件分片上传失败',
@@ -123,8 +109,6 @@ export default class UploadController {
         result: res,
       }
     } catch (error) {
-      console.log(error)
-
       ctx.body = {
         code: 500,
         message: '文件合并失败',
