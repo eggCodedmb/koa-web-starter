@@ -29,11 +29,22 @@ export const createOne = async (newOne: IUserModel): Promise<User> => {
 }
 
 export const updateOne = async (newOne: IUserModel): Promise<User> => {
-  const one = await User.findByPk(newOne.id)
+  const one = await User.findByPk(newOne.id || newOne.username)
   if (!one) {
     global.UnifyResponse.notFoundException(10404)
   }
   return await one!.update(newOne)
+}
+
+export const updatePasswordByUserName = async (
+  username: string,
+  password: string
+): Promise<User> => {
+  const one = await User.findByPk(username)
+  if (!one) {
+    global.UnifyResponse.notFoundException(10404)
+  }
+  return await one!.update({ password })
 }
 
 export const getById = async (id: number): Promise<User> => {
@@ -44,8 +55,9 @@ export const getById = async (id: number): Promise<User> => {
   return one!
 }
 
-export const getOneByUsername = async (username: string): Promise<User | null> => {
-  return await User.findOne({ where: { username } })
+export const getOneByUsername = async (username: string): Promise<User> => {
+  const { dataValues } = await User.findOne({ where: { username } })
+  return dataValues
 }
 
 export const deleteById = async (id: number): Promise<boolean> => {

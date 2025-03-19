@@ -1,5 +1,15 @@
 import type { Context } from 'koa'
-import { body, description, path, prefix, query, request, security, summary, tags } from 'koa-swagger-decorator'
+import {
+  body,
+  description,
+  path,
+  prefix,
+  query,
+  request,
+  security,
+  summary,
+  tags,
+} from 'koa-swagger-decorator'
 import { pagingSchema } from '~/app/dto/base'
 import { passwordSchema, userSchema } from '~/app/dto/user'
 import {
@@ -11,6 +21,7 @@ import {
   getPage,
   updateOne,
   getOneByUsername,
+  updatePasswordByUserName,
 } from '~/app/service/user'
 import { getVIPById } from '~/app/service/vip'
 import auth, { authAll } from '~/core/auth'
@@ -36,7 +47,7 @@ export default class UserController {
   @body(userSchema)
   @auth(false)
   async login(ctx: Context) {
-    const {username, password} = ctx.validatedBody
+    const { username, password } = ctx.validatedBody
     const user = await getOneByUsername(username)
     if (!user) return global.UnifyResponse.notFoundException(20001) // 用户未找到
     const isPassword = await compare(password, user.password)
@@ -113,6 +124,27 @@ export default class UserController {
   async update(ctx: Context) {
     const user = ctx.validatedBody
     await updateOne(user)
+    global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE })
+  }
+
+  @request('post', '/password')
+  @summary('修改用户密码')
+  @tag
+  @security([{ api_key: [] }])
+  // @body(passwordSchema)
+  @body({})
+  async updatePassword(ctx: Context) {
+    let { username, oldPassword, newPassword } = ctx.validatedBody
+
+    const { password, ...res } = await getOneByUsername(username)
+
+    if (!password) return global.UnifyResponse.notFoundException(20001) // 用户未找到
+    const isPassword = await compare(oldPassword, password)
+    if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
+    const hashPassword = await encrypt(newPassword)
+    const result = await updatePasswordByUserName(username, hashPassword)
+    console.log(result)
+
     global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE })
   }
 
