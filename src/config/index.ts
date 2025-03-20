@@ -34,7 +34,7 @@ const CONFIG = {
     NO_TYPE_CHECK: false, // true:校验文件类型 false:不校验文件类型
   },
   SDSERVER: {
-    HOST: 'http://ai.xn--4gqz0ap8cowd.top:7860',
+    HOST: 'http://ai.xn--4gqz0ap8cowd.top:7860/sdapi',
   },
 }
 

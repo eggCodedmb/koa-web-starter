@@ -50,9 +50,7 @@ class HttpClient {
     const endTime = new Date()
     const duration = endTime.getTime() - (response.config as any).metadata.startTime.getTime()
 
-    log.config({
-      title: `请求 ${response.config.url} 耗时 ${duration}ms`,
-    })
+    console.log(`请求成功 ${response.config.url} 耗时 ${duration}ms`)
 
     // 处理二进制数据
     if (response.config.responseType === 'blob') {
@@ -60,13 +58,12 @@ class HttpClient {
     }
 
     // 根据业务状态码处理
-    const { code, data, message } = response.data
-
-    if (code === 200) {
+    const data = response.data
+    if (response.status === 200) {
       return data
     } else {
-      this.handleBusinessError(code, message)
-      return Promise.reject(new Error(message || 'Error'))
+      this.handleBusinessError(response.status, response.statusText)
+      return Promise.reject(new Error(response.statusText || 'Error'))
     }
   }
 
@@ -116,7 +113,7 @@ class HttpClient {
 // 日志配置的辅助函数
 const log = {
   config: (info: { title: string }) => {
-    // console.log(info.title)
+    console.log(info.title)
   },
 }
 
@@ -124,25 +121,6 @@ const log = {
 const service = new HttpClient({
   baseURL: BASE_API,
   timeout: 15000,
-  withCredentials: true, // 跨域请求时是否需要使用凭证
-  transformRequest: [
-    (data, headers) => {
-      // 自动转换请求数据
-      if (headers['Content-Type'] === 'application/json') {
-        return JSON.stringify(data)
-      }
-      return data
-    },
-  ],
-  transformResponse: [
-    (data) => {
-      try {
-        return JSON.parse(data)
-      } catch (e) {
-        return data
-      }
-    },
-  ],
 })
 
 export default service
