@@ -113,7 +113,8 @@ class HttpClient {
 // 创建实例
 const service = new HttpClient({
   baseURL: BASE_API,
-  timeout: 15000,
+  timeout: 30000,
+  withCredentials: true,
 })
 
 export default service

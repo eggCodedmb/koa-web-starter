@@ -26,6 +26,7 @@ export default class TextToImgController {
     const data = ctx.request.body
     const res = await Http.post('/sdapi/v1/txt2img', data)
     const imgs = res.images
+    const force_task_id = res.force_task_id
     const imgUrls = []
     for (const base64 of imgs) {
       imgUrls.push(base64ToFile(base64))
@@ -33,7 +34,10 @@ export default class TextToImgController {
     ctx.body = {
       code: 200,
       message: 'success',
-      result: imgUrls,
+      result: {
+        imgUrls,
+        force_task_id,
+      },
     }
   }
 
