@@ -102,19 +102,12 @@ class HttpClient {
     return this.service.delete(url, { params, ...config })
   }
 
-  // 辅助方法：将对象转换为 x-www-form-urlencoded 格式
+  // 辅助方法
   private stringifyFormData(data: any): string {
     return Object.keys(data)
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join('&')
   }
-}
-
-// 日志配置的辅助函数
-const log = {
-  config: (info: { title: string }) => {
-    console.log(info.title)
-  },
 }
 
 // 创建实例

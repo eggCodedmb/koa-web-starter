@@ -12,20 +12,29 @@ import {
 } from 'koa-swagger-decorator'
 import { textImgSchema } from '~/app/dto/texelToimg'
 import Http from '~/utils/request'
+import { base64ToFile } from '~/utils/base64ToFile'
 
 const tag = tags(['文生图'])
 @prefix('/v1')
 export default class TextToImgController {
-  @request('post', '/text2img')
-  @summary('create a task')
-  @description('example: /text2img')
+  @request('post', '/txt2img')
+  @summary('create task')
+  @description('example: /txt2img')
   @tag
   @body(textImgSchema)
   public async createTask(ctx: Context): Promise<void> {
     const data = ctx.request.body
-
-    const res = await Http.post('/v1/text2img', data)
-    ctx.body = res
+    const res = await Http.post('/v1/txt2img', data)
+    const imgs = res.images
+    const imgUrls = []
+    for (const base64 of imgs) {
+      imgUrls.push(base64ToFile(base64))
+    }
+    ctx.body = {
+      code: 200,
+      message: 'success',
+      result: imgUrls,
+    }
   }
 
   @request('get', '/progress')
