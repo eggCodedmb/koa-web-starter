@@ -10,7 +10,7 @@ import {
   params,
   path,
 } from 'koa-swagger-decorator'
-import { textImgSchema } from '~/app/dto/texelToimg'
+import { textImgSchema } from '~/app/dto/txtToImg'
 import Http from '~/utils/request'
 import { base64ToFile } from '~/utils/base64ToFile'
 
@@ -24,7 +24,7 @@ export default class TextToImgController {
   @body(textImgSchema)
   public async createTask(ctx: Context): Promise<void> {
     const data = ctx.request.body
-    const res = await Http.post('/v1/txt2img', data)
+    const res = await Http.post('/sdapi/v1/txt2img', data)
     const imgs = res.images
     const imgUrls = []
     for (const base64 of imgs) {
@@ -46,7 +46,7 @@ export default class TextToImgController {
   })
   public async testTask(ctx: Context): Promise<void> {
     const skip_current_image = ctx.validatedParams
-    const res = await Http.get('/v1/progress', skip_current_image)
+    const res = await Http.get('/sdapi/v1/progress', skip_current_image)
     ctx.body = res
   }
 }
