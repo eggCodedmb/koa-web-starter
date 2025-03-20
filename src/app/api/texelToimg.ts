@@ -23,7 +23,7 @@ export default class TextToImgController {
   @body(textImgSchema)
   public async createTask(ctx: Context): Promise<void> {
     const data = ctx.request.body
-    
+
     const res = await Http.post('/v1/text2img', data)
     ctx.body = res
   }
