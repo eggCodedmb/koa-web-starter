@@ -1,34 +1,30 @@
 import type { Context } from 'koa'
-import {
-  body,
-  description,
-  prefix,
-  request,
-  summary,
-  tags,
-  query,
-  params,
-  path,
-} from 'koa-swagger-decorator'
+import { body, description, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import { textImgSchema } from '~/app/dto/txtToImg'
 import Http from '~/utils/request'
 import { base64ToFile } from '~/utils/base64ToFile'
+import { randomId } from '~/utils/index'
+import auth, { decodeToken } from '~/core/auth'
 
-const tag = tags(['文生图'])
+const tag = tags(['AI绘图接口'])
 @prefix('/v1')
 export default class TextToImgController {
   @request('post', '/txt2img')
-  @summary('create task')
+  @summary('文生图')
   @description('example: /txt2img')
   @tag
   @body(textImgSchema)
+  @auth()
   public async createTask(ctx: Context): Promise<void> {
     const data = ctx.request.body
+    const token = ctx.header.authorization?.slice(7) || ''
+    const userId = decodeToken(token)
+    const taskId = randomId()
+    await global.storage.set(userId, taskId)
+    data.force_task_id = taskId
     const res = await Http.post('/sdapi/v1/txt2img', data)
-    const imgs = res.images
-    const force_task_id = res.force_task_id
     const imgUrls = []
-    for (const base64 of imgs) {
+    for (const base64 of res.images) {
       imgUrls.push(base64ToFile(base64))
     }
     ctx.body = {
@@ -36,21 +32,7 @@ export default class TextToImgController {
       message: 'success',
       result: {
         imgUrls,
-        force_task_id,
       },
     }
-  }
-
-  @request('get', '/progress')
-  @summary('get task progress')
-  @description('example: /v1/progress?skip_current_image=true')
-  @tag
-  @path({
-    skip_current_image: { type: 'boolean', required: false, default: false },
-  })
-  public async testTask(ctx: Context): Promise<void> {
-    const skip_current_image = ctx.validatedParams
-    const res = await Http.get('/sdapi/v1/progress', skip_current_image)
-    ctx.body = res
   }
 }

@@ -36,6 +36,8 @@ const CONFIG = {
   SDSERVER: {
     HOST: 'http://ai.xn--4gqz0ap8cowd.top:7860',
   },
+  STORAGE_DIR: 'public/storage',
+  STORAGE_MAX_AGE: 1000 * 60 * 60 * 24 * 30, // 30 days
 }
 
 export default CONFIG

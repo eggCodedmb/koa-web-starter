@@ -102,9 +102,9 @@ export default class UserController {
     ctx.body = user
   }
 
-  @request('post', '')
+  @request('post', '/register')
   @summary('创建用户')
-  @description('示例：/user')
+  @description('示例：/register')
   @tag
   @security([{ api_key: [] }])
   @body(userSchema)
@@ -131,7 +131,6 @@ export default class UserController {
   @summary('修改用户密码')
   @tag
   @security([{ api_key: [] }])
-  // @body(passwordSchema)
   @body({})
   async updatePassword(ctx: Context) {
     let { username, oldPassword, newPassword } = ctx.validatedBody
