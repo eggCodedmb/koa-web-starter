@@ -116,6 +116,8 @@ export default class UserController {
   @body(userSchema)
   async create(ctx: Context) {
     const user = ctx.validatedBody
+    console.log(user)
+
     user.password = await encrypt(user.password)
     await createOne(user)
     global.UnifyResponse.createSuccess({ code: global.SUCCESS_CODE, message: '注册成功' })

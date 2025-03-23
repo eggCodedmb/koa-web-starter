@@ -56,8 +56,8 @@ export const getById = async (id: number): Promise<User> => {
 }
 
 export const getOneByUsername = async (username: string): Promise<User> => {
-  const { dataValues } = await User.findOne({ where: { username } })
-  return dataValues
+  const res = await User.findOne({ where: { username } })
+  return res!
 }
 
 export const deleteById = async (id: number): Promise<boolean> => {
