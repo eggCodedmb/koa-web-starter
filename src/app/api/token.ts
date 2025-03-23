@@ -1,12 +1,5 @@
 import type { Context } from 'koa'
-import {
-  body,
-  description,
-  prefix,
-  request,
-  summary,
-  tags,
-} from 'koa-swagger-decorator'
+import { body, description, prefix, request, summary, tags } from 'koa-swagger-decorator'
 import { code2Session, userLogin } from '~/app/service/token'
 import { LOGIN_TYPE } from '~/app/shared/enum'
 
@@ -39,6 +32,10 @@ export default class TokenController {
         global.UnifyResponse.parameterException(20002)
         break
     }
-    ctx.body = { token: token }
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: 'success',
+      result: { token },
+    }
   }
 }
