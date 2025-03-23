@@ -6,6 +6,7 @@ export interface IUserModel extends IBaseModel {
   username: string
   password: string
   nickname: string
+  email: string
   avatar?: string
 }
 
@@ -23,6 +24,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       comment: '用户密码',
+    },
+    email: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: '用户邮箱',
     },
     nickname: {
       type: DataTypes.STRING(20),
