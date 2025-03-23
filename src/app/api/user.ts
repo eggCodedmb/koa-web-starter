@@ -53,7 +53,14 @@ export default class UserController {
     const isPassword = await compare(password, user.password)
     if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
     const token = generateToken(user.id)
-    ctx.body = { user, token }
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: '登录成功',
+      result: {
+        user,
+        token,
+      },
+    }
   }
 
   @request('get', '/me')
@@ -64,7 +71,14 @@ export default class UserController {
   async me(ctx: Context) {
     const user = await curUser(ctx)
     const vip = await getVIPById(user.id)
-    ctx.body = { user, vip }
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: '获取成功',
+      result: {
+        user,
+        vip,
+      },
+    }
   }
 
   @request('get', '/list')
@@ -75,6 +89,13 @@ export default class UserController {
   async list(ctx: Context) {
     const list = await getList()
     ctx.body = { list }
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: '获取成功',
+      result: {
+        list,
+      },
+    }
   }
 
   @request('get', '/page')
@@ -85,21 +106,13 @@ export default class UserController {
   @auth(true)
   async page(ctx: Context) {
     const paging = await getPage(ctx)
-    ctx.body = { paging }
-  }
-
-  @request('get', '/{id}/detail')
-  @summary('获取用户详情')
-  @description('示例：/user/1/detail')
-  @tag
-  @security([{ api_key: [] }])
-  @path({
-    id: { type: 'string', required: true, default: null, description: '用户ID' },
-  })
-  async detail(ctx: Context) {
-    const { id } = ctx.validatedParams
-    const user = await getById(id)
-    ctx.body = user
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: '获取成功',
+      result: {
+        paging,
+      },
+    }
   }
 
   @request('post', '/register')
@@ -112,7 +125,7 @@ export default class UserController {
     const user = ctx.validatedBody
     user.password = await encrypt(user.password)
     await createOne(user)
-    global.UnifyResponse.createSuccess({ code: global.SUCCESS_CODE })
+    global.UnifyResponse.createSuccess({ code: global.SUCCESS_CODE, message: '注册成功' })
   }
 
   @request('put', '')
@@ -124,7 +137,7 @@ export default class UserController {
   async update(ctx: Context) {
     const user = ctx.validatedBody
     await updateOne(user)
-    global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE })
+    global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE, message: '修改成功' })
   }
 
   @request('post', '/password')
@@ -144,7 +157,7 @@ export default class UserController {
     const result = await updatePasswordByUserName(username, hashPassword)
     console.log(result)
 
-    global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE })
+    global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE, message: '修改成功' })
   }
 
   @request('delete', '/{id}')
@@ -159,6 +172,6 @@ export default class UserController {
   async delete(ctx: Context) {
     const { id } = ctx.validatedParams
     await deleteById(id)
-    global.UnifyResponse.deleteSuccess({ code: global.SUCCESS_CODE })
+    global.UnifyResponse.deleteSuccess({ code: global.SUCCESS_CODE, message: '删除成功' })
   }
 }

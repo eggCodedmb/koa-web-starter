@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 import type { UnifyResponse } from '../core/exception/unify-response'
 import type { LoggerOptions } from '../core/log'
 import type nodePersist from 'node-persist'

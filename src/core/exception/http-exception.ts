@@ -52,11 +52,13 @@ export class ServerErrorException extends HttpException {
 }
 
 export class Success extends HttpException {
-  constructor(code: number, message: string) {
+  result?: any
+  constructor(code: number, message: string, result?: any) {
     super(code)
     this.code = code
     this.status = 200
     this.message = message
+    this.result = result
   }
 }
 
