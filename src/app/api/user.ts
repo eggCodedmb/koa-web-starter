@@ -33,13 +33,6 @@ const tag = tags(['用户管理'])
 @prefix('/user')
 @authAll
 export default class UserController {
-  /**
-   * @security([{ api_key: [] }])
-   * 在 Swagger UI 中，将显示一个锁图标，您可以点击查看并配置所需的 API 密钥或 OAuth2 令牌。
-   * 如果您的 API 不需要安全措施，`@security` 可以省略。
-   * @param ctx
-   */
-
   @request('post', '/login')
   @summary('用户登录')
   @description('示例：/user/login')
@@ -103,7 +96,7 @@ export default class UserController {
   @description('示例：/user/page')
   @tag
   @query(pagingSchema)
-  @auth(true)
+  @auth()
   async page(ctx: Context) {
     const paging = await getPage(ctx)
     ctx.body = {
@@ -134,6 +127,7 @@ export default class UserController {
   @tag
   @security([{ api_key: [] }])
   @body(passwordSchema)
+  @auth()
   async update(ctx: Context) {
     const user = ctx.validatedBody
     await updateOne(user)
@@ -154,9 +148,7 @@ export default class UserController {
     const isPassword = await compare(oldPassword, password)
     if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
     const hashPassword = await encrypt(newPassword)
-    const result = await updatePasswordByUserName(username, hashPassword)
-    console.log(result)
-
+    await updatePasswordByUserName(username, hashPassword)
     global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE, message: '修改成功' })
   }
 
