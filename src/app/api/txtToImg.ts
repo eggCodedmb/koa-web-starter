@@ -22,7 +22,7 @@ export default class TextToImgController {
       imgUrls.push(base64ToFile(base64))
     }
     ctx.body = {
-      code: 200,
+      code: global.SUCCESS_CODE,
       message: 'success',
       result: {
         imgUrls,

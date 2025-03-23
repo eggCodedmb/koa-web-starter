@@ -25,7 +25,7 @@ export default class TextToImgController {
   public async getModels(ctx: Context): Promise<void> {
     const res = await Http.get('/sdapi/v1/sd-models')
     ctx.body = {
-      code: 200,
+      code: global.SUCCESS_CODE,
       message: 'success',
       result: {
         models: res,
@@ -57,7 +57,7 @@ export default class TextToImgController {
 
     const live_preview = base64ToFile(res.live_preview)
     ctx.body = {
-      code: 200,
+      code: global.SUCCESS_CODE,
       message: 'success',
       result: {
         ...res,
