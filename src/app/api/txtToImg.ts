@@ -3,8 +3,7 @@ import { body, description, prefix, request, summary, tags } from 'koa-swagger-d
 import { textImgSchema } from '~/app/dto/txtToImg'
 import Http from '~/utils/request'
 import { base64ToFile } from '~/utils/base64ToFile'
-import { randomId } from '~/utils/index'
-import auth, { decodeToken } from '~/core/auth'
+import auth from '~/core/auth'
 
 const tag = tags(['AI绘图接口'])
 @prefix('/v1')
@@ -17,11 +16,6 @@ export default class TextToImgController {
   @auth()
   public async createTask(ctx: Context): Promise<void> {
     const data = ctx.request.body
-    const token = ctx.header.authorization?.slice(7) || ''
-    const userId = decodeToken(token)
-    const taskId = randomId()
-    await global.storage.set(userId, taskId)
-    data.force_task_id = taskId
     const res = await Http.post('/sdapi/v1/txt2img', data)
     const imgUrls = []
     for (const base64 of res.images) {

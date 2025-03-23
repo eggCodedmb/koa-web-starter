@@ -8,6 +8,9 @@ import { getUploadDir } from '~/utils/locaUpload'
  * @returns 返回文件路径.
  */
 export const base64ToFile = (base64: string): string => {
+  if (!base64) {
+    return ''
+  }
   const outputDir = getUploadDir()
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true })
@@ -45,7 +48,7 @@ export const getBase64FileType = (base64: string): string => {
 
   //如果不在map中返回unknown file
   if (res == '') {
-    res = 'unknown file'
+    res = 'PNG'
   }
 
   return res

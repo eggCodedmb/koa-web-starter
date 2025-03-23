@@ -11,8 +11,8 @@ import {
   path,
 } from 'koa-swagger-decorator'
 import Http from '~/utils/request'
-import { randomId } from '~/utils/index'
-import auth, { authAll, decodeToken } from '~/core/auth'
+import { base64ToFile } from '~/utils/base64ToFile'
+import auth from '~/core/auth'
 
 const tag = tags(['AI绘图接口'])
 @prefix('/v1')
@@ -39,6 +39,11 @@ export default class TextToImgController {
   @description('example: /progress')
   @tag
   @body({
+    id_task: {
+      type: 'string',
+      required: false,
+      description: '任务id',
+    },
     id_live_preview: {
       type: 'number',
       required: false,
@@ -47,23 +52,16 @@ export default class TextToImgController {
   })
   @auth()
   public async getProgress(ctx: Context): Promise<void> {
-    const { id_live_preview } = ctx.request.body
-    const token = ctx.header.authorization?.slice(7) || ''
-    const userId = decodeToken(token)
-    const taskId = await global.storage.get(userId)
+    const data = ctx.request.body
+    const res = await Http.post('/internal/progress', data)
 
-    const params = {
-      task_id: taskId,
-      id_live_preview: id_live_preview || 0,
-    }
-    console.log(params)
-
-    const res = await Http.post('/internal/progress', params)
+    const live_preview = base64ToFile(res.live_preview)
     ctx.body = {
       code: 200,
       message: 'success',
       result: {
         ...res,
+        live_preview,
       },
     }
   }
