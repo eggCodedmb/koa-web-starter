@@ -9,13 +9,13 @@ import { File } from '~/typings/global'
 const tag = tags(['文件上传'])
 
 @prefix('/file')
-// @authAll
 export default class UploadController {
   @request('post', '/upload')
   @summary('文件上传接口')
   @description('支持多文件上传')
   @tag
   @body({})
+  @auth()
   async upload(ctx: Context) {
     try {
       const files = ctx.request.files
@@ -55,6 +55,7 @@ export default class UploadController {
         message: '文件上传成功',
       }
     } catch (error) {
+      console.log(error)
       if (error instanceof FileLimitExceededError) {
         ctx.status = 413
         ctx.body = { code: 413, message: error.message }
@@ -75,6 +76,8 @@ export default class UploadController {
   @tag
   async uploadChunk(ctx: Context) {
     try {
+      console.log(ctx)
+
       const file = ctx.request.files?.file as File
 
       const path = CONFIG.UPLOADFILE.UPLOAD_TEMP
@@ -86,9 +89,11 @@ export default class UploadController {
         result: res,
       }
     } catch (error) {
+      console.log(error)
+
       ctx.body = {
         code: 500,
-        message: '文件分片上传失败',
+        message: error.message,
       }
     }
   }
