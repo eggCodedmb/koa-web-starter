@@ -141,7 +141,7 @@ export const textImgSchema: SchemaProps = {
   override_settings: {
     type: 'object',
     required: false,
-    description: '覆盖设置，用于指定图像生成的覆盖设置',
+    description: '覆盖设置，用于指定图像生成的覆盖设置，設置模型',
   },
   override_settings_restore_afterwards: {
     type: 'boolean',

@@ -18,6 +18,8 @@ export default class UploadController {
   @auth()
   async upload(ctx: Context) {
     try {
+      console.log(ctx);
+      
       const files = ctx.request.files
       let fileList: File[] = []
 
