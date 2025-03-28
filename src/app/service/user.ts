@@ -28,12 +28,9 @@ export const createOne = async (newOne: IUserModel): Promise<User> => {
   }
 }
 
-export const updateOne = async (newOne: IUserModel): Promise<User> => {
-  const one = await User.findByPk(newOne.id || newOne.username)
-  if (!one) {
-    global.UnifyResponse.notFoundException(10404)
-  }
-  return await one!.update(newOne)
+export const updateUser = async (key: string, newOne: IUserModel) => {
+  const res = await User.update(newOne, { where: { id: key } })
+  return res
 }
 
 export const updatePasswordByUserName = async (

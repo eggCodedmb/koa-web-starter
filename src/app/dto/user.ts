@@ -48,3 +48,25 @@ export const passwordSchema: SchemaProps = {
     pattern: passwordReg,
   },
 }
+
+export const userInfoSchema: SchemaProps = {
+  email: {
+    type: 'string',
+    required: false,
+    description: '邮箱',
+    example: '123456789@qq.com',
+    pattern: emailReg,
+  },
+  nickname: {
+    type: 'string',
+    required: false,
+    description: '昵称',
+    example: '马牛逼',
+  },
+  avatar: {
+    type: 'string',
+    required: false,
+    description: '头像',
+    example: 'url地址',
+  },
+}

@@ -11,7 +11,7 @@ import {
   tags,
 } from 'koa-swagger-decorator'
 import { pagingSchema } from '~/app/dto/base'
-import { passwordSchema, userSchema } from '~/app/dto/user'
+import { passwordSchema, userSchema, userInfoSchema } from '~/app/dto/user'
 import {
   createOne,
   curUser,
@@ -19,7 +19,7 @@ import {
   getById,
   getList,
   getPage,
-  updateOne,
+  updateUser,
   getOneByUsername,
   updatePasswordByUserName,
 } from '~/app/service/user'
@@ -121,16 +121,19 @@ export default class UserController {
     global.UnifyResponse.createSuccess({ code: global.SUCCESS_CODE, message: '注册成功' })
   }
 
-  @request('put', '')
+  @request('put', '/update')
   @summary('修改用户信息')
-  @description('示例：/user')
+  @description('示例：/user/update')
   @tag
-  @security([{ api_key: [] }])
-  @body(passwordSchema)
+  @body(userInfoSchema)
   @auth()
   async update(ctx: Context) {
+    const id = ctx.state.user?.id
+    if (!id) {
+      global.UnifyResponse.notFoundException(10404)
+    }
     const user = ctx.validatedBody
-    await updateOne(user)
+    await updateUser(id as string, user)
     global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE, message: '修改成功' })
   }
 
@@ -138,7 +141,7 @@ export default class UserController {
   @summary('修改用户密码')
   @tag
   @security([{ api_key: [] }])
-  @body({})
+  @body(passwordSchema)
   async updatePassword(ctx: Context) {
     let { username, oldPassword, newPassword } = ctx.validatedBody
 

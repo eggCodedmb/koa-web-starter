@@ -18,11 +18,8 @@ export default class UploadController {
   @auth()
   async upload(ctx: Context) {
     try {
-      console.log(ctx);
-      
       const files = ctx.request.files
       let fileList: File[] = []
-
       if (!files) {
         return (ctx.body = {
           code: 400,
@@ -32,7 +29,6 @@ export default class UploadController {
       Object.keys(files).forEach((key) => {
         fileList = fileList.concat(files[key])
       })
-
       const allowedTypes = CONFIG.UPLOADFILE.TYPE
       const maxCount = CONFIG.UPLOADFILE.MAXCOUNT
       const maxSize = CONFIG.UPLOADFILE.MAXSIZE
@@ -42,7 +38,6 @@ export default class UploadController {
         allowedTypes,
         noTypeCheck: CONFIG.UPLOADFILE.NO_TYPE_CHECK,
       })
-
       const result = await uploadFile(fileList)
       const data = result.map((item) => {
         return {
@@ -52,7 +47,7 @@ export default class UploadController {
       })
 
       ctx.body = {
-        code: 200,
+        code: 0,
         result: data,
         message: '文件上传成功',
       }
@@ -78,8 +73,6 @@ export default class UploadController {
   @tag
   async uploadChunk(ctx: Context) {
     try {
-      console.log(ctx)
-
       const file = ctx.request.files?.file as File
 
       const path = CONFIG.UPLOADFILE.UPLOAD_TEMP
