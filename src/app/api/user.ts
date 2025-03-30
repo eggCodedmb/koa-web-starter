@@ -31,14 +31,12 @@ import { generateToken } from '~/core/auth'
 const tag = tags(['用户管理'])
 
 @prefix('/user')
-@authAll
 export default class UserController {
   @request('post', '/login')
   @summary('用户登录')
   @description('示例：/user/login')
   @tag
   @body(userSchema)
-  @auth(false)
   async login(ctx: Context) {
     const { username, password } = ctx.validatedBody
     const user = await getOneByUsername(username)
