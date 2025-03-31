@@ -57,7 +57,7 @@ class SequelizeClient {
   // 同步模型
   public async syncModel() {
     await this.sequelizeClient?.sync({ alter: true })  // 自动更新表结构
-    console.log('同步所有模型')
+    console.log('✅ 同步所有模型')
   }
 
   // 通过事务暴露transaction方法

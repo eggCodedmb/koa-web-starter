@@ -13,6 +13,15 @@ import {
 import Http from '~/utils/request'
 import { base64ToFile } from '~/utils/base64ToFile'
 import auth from '~/core/auth'
+import { textImgSchema } from '~/app/dto/txtToImg'
+import {
+  getGeneratedImageList,
+  createGeneratedImage,
+  updateGeneratedImageById,
+  getGeneratedImageById,
+  deleteGeneratedImageById,
+  deleteGeneratedImageByIds,
+} from '~/app/service/generatedImage'
 
 const tag = tags(['AI绘图接口'])
 @prefix('/v1')
@@ -62,6 +71,45 @@ export default class TextToImgController {
       result: {
         ...res,
         live_preview,
+      },
+    }
+  }
+  @request('post', '/txt2img')
+  @summary('文生图')
+  @description('example: /txt2img')
+  @tag
+  @body(textImgSchema)
+  @auth()
+  public async createTask(ctx: Context): Promise<void> {
+    const userId = ctx.state.user?.id
+    if (!userId) {
+      global.UnifyResponse.unAuthenticatedException(10401)
+    }
+    const data = ctx.request.body
+    const res = await Http.post('/sdapi/v1/txt2img', data)
+    const imgUrls = []
+    for (const base64 of res.images) {
+      imgUrls.push(base64ToFile(base64))
+    }
+    const config = {
+      userId: userId,
+      prompt: data.prompt,
+      negativePrompt: data.negative_prompt,
+      imageUrl: imgUrls[0],
+      seed: data.seed,
+      steps: data.steps,
+      cfgScale: data.cfg_scale,
+      width: data.width,
+      height: data.height,
+      samplerName: data.sampler_name,
+      additionalParams: data,
+    }
+    await createGeneratedImage(config)
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: 'success',
+      result: {
+        imgUrls,
       },
     }
   }

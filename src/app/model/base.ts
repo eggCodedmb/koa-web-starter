@@ -2,12 +2,12 @@ import { DataTypes, Model,UUIDV4 } from 'sequelize'
 import sequelizeClient from '~/core/database'
 
 export interface IBaseModel {
-  id: string
-  created_at: Date
-  updated_at: Date
-  deleted_at: Date
+  id?: string
+  created_at?: Date
+  updated_at?: Date
+  deleted_at?: Date
 }
-
+// 继承Model<T, C>，T是模型的属性，C是模型的创建属性
 export class BaseModel<T extends Object, C extends Object> extends Model<T, C> {
   declare id: string
   declare created_at: Date

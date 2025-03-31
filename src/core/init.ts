@@ -5,7 +5,7 @@ import catchError from './exception'
 import InitGlobal from './global'
 import swaggerRouter from './swagger'
 import { initDB } from './database/init'
-
+import { staticServer, uploadServer } from '~/utils/staticServer'
 export default class InitManager {
   private app: Koa
 
@@ -20,6 +20,8 @@ export default class InitManager {
     this.app.use(koaBody({ multipart: true })) // body parameter processing
     this.app.use(catchError) // global exception handling
     this._initRoutesAndSwagger() // router and api docs
+    this.app.use(staticServer())
+    this.app.use(uploadServer())
     initDB()
   }
 

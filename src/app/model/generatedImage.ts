@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import type { IBaseModel } from './base'
 import { BaseModel, baseFields, baseOptions } from './base'
 
-export interface IGeneratedImageModel extends IBaseModel {
+export interface IGeneratedImage extends IBaseModel {
   userId: string
   imageUrl: string
   prompt: string
@@ -14,10 +14,15 @@ export interface IGeneratedImageModel extends IBaseModel {
   height?: number
   samplerName?: string
   modelName?: string
-  additionalParams?: object
+  additionalParams?: Record<string, any>
 }
 
-export default class GeneratedImage extends BaseModel<IGeneratedImageModel, IGeneratedImageModel> {}
+export type IGeneratedImageCreate = Omit<
+  IGeneratedImage,
+  keyof IBaseModel | 'createdAt' | 'updatedAt'
+>
+
+export default class GeneratedImage extends BaseModel<IGeneratedImage, IGeneratedImageCreate> {}
 
 GeneratedImage.init(
   {

@@ -1,5 +1,5 @@
 import { GeneratedImage } from '~/app/model'
-import { IGeneratedImageModel } from '~/app/model/generatedImage'
+import { IGeneratedImage } from '~/app/model/generatedImage'
 import { Op } from 'sequelize'
 import { Paging } from '../dto/base'
 
@@ -38,7 +38,7 @@ export const getGeneratedImageById = async (id: string): Promise<GeneratedImage>
  * @returns  - 图片对象
  */
 export const createGeneratedImage = async (
-  newOne: IGeneratedImageModel
+  newOne: IGeneratedImage
 ): Promise<GeneratedImage> => {
   const res = await GeneratedImage.create(newOne)
   return res
@@ -58,7 +58,7 @@ export const deleteGeneratedImageByIds = async (ids: string[]): Promise<boolean>
 
 export const updateGeneratedImageById = async (
   id: string,
-  newOne: IGeneratedImageModel
+  newOne: IGeneratedImage
 ): Promise<GeneratedImage> => {
   const res = await GeneratedImage.update(newOne, { where: { id } })
   return res[0] > 0 ? await getGeneratedImageById(id) : null!
