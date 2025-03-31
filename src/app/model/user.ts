@@ -16,8 +16,12 @@ User.init(
   {
     ...baseFields,
     username: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(20),
       allowNull: false,
+      unique: {
+        name: 'username_unique', // 唯一约束的名称
+        msg: '用户名已存在', // 自定义错误消息
+      },
       comment: '用户账号',
     },
     password: {
@@ -37,7 +41,7 @@ User.init(
       defaultValue: '用户' + Math.floor(Math.random() * 1000),
     },
     avatar: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(512),
       allowNull: true,
       comment: '用户头像',
     },
