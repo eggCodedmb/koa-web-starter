@@ -10,6 +10,8 @@ import Permission from './permission'
 import RolePermission from './role-permission'
 import Menu from './menu'
 import RoleMenu from './role-menu'
+import GeneratedImage from './generatedImage'
+import UserImage from './user-image'
 
 // 关联关系：一个用户有一个会员信息
 User.hasOne(Membership, { foreignKey: 'userId' })
@@ -91,4 +93,29 @@ RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
 RoleMenu.belongsTo(Role, { foreignKey: 'roleId' })
 RoleMenu.belongsTo(Menu, { foreignKey: 'menuId' })
 
-export { User, Membership, Order, OrderItem, Product, Log, Role, UserRole, Permission, RolePermission, Menu, RoleMenu }
+// ai绘图
+GeneratedImage.belongsToMany(User, {
+  through: UserImage,
+  foreignKey: 'imageId',
+  otherKey: 'userId',
+})
+User.belongsToMany(GeneratedImage, {
+  through: UserImage,
+  foreignKey: 'userId',
+  otherKey: 'imageId',
+})
+export {
+  User,
+  Membership,
+  Order,
+  OrderItem,
+  Product,
+  Log,
+  Role,
+  UserRole,
+  Permission,
+  RolePermission,
+  Menu,
+  RoleMenu,
+  GeneratedImage,
+}

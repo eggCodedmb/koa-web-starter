@@ -36,7 +36,7 @@ class SequelizeClient {
 
     this.sequelizeClient = sequelizeClient
     // 同步模型
-    // this.syncModel()
+    this.syncModel()
   }
 
   public static getInstance() {
@@ -56,7 +56,7 @@ class SequelizeClient {
 
   // 同步模型
   public async syncModel() {
-    await this.sequelizeClient?.sync({ alter: true })
+    await this.sequelizeClient?.sync({ alter: true })  // 自动更新表结构
     console.log('同步所有模型')
   }
 
