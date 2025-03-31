@@ -9,18 +9,17 @@ import { File } from '~/typings/global'
 const tag = tags(['文件上传'])
 
 @prefix('/file')
-// @authAll
 export default class UploadController {
   @request('post', '/upload')
   @summary('文件上传接口')
   @description('支持多文件上传')
   @tag
   @body({})
+  @auth()
   async upload(ctx: Context) {
     try {
       const files = ctx.request.files
       let fileList: File[] = []
-
       if (!files) {
         return (ctx.body = {
           code: 400,
@@ -30,7 +29,6 @@ export default class UploadController {
       Object.keys(files).forEach((key) => {
         fileList = fileList.concat(files[key])
       })
-
       const allowedTypes = CONFIG.UPLOADFILE.TYPE
       const maxCount = CONFIG.UPLOADFILE.MAXCOUNT
       const maxSize = CONFIG.UPLOADFILE.MAXSIZE
@@ -40,7 +38,6 @@ export default class UploadController {
         allowedTypes,
         noTypeCheck: CONFIG.UPLOADFILE.NO_TYPE_CHECK,
       })
-
       const result = await uploadFile(fileList)
       const data = result.map((item) => {
         return {
@@ -50,11 +47,12 @@ export default class UploadController {
       })
 
       ctx.body = {
-        code: 200,
+        code: 0,
         result: data,
         message: '文件上传成功',
       }
     } catch (error) {
+      console.log(error)
       if (error instanceof FileLimitExceededError) {
         ctx.status = 413
         ctx.body = { code: 413, message: error.message }
@@ -86,9 +84,11 @@ export default class UploadController {
         result: res,
       }
     } catch (error) {
+      console.log(error)
+
       ctx.body = {
         code: 500,
-        message: '文件分片上传失败',
+        message: error.message,
       }
     }
   }

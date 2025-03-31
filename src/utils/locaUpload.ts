@@ -13,7 +13,7 @@ export async function uploadFile(files: File[]): Promise<UploadResult[]> {
     files.map(async (file) => {
       try {
         const fileInfo = await processSingleFile(file, uploadDir)
-        await fs.rename(file.filepath, fileInfo.filePath)
+        await moveFile(file.filepath, fileInfo.filePath)
         return fileInfo
       } catch (error) {
         await fs.unlink(file.filepath).catch(() => {})
@@ -21,6 +21,11 @@ export async function uploadFile(files: File[]): Promise<UploadResult[]> {
       }
     })
   )
+}
+
+async function moveFile(source: string, destination: string): Promise<void> {
+  await fs.copyFile(source, destination)
+  await fs.unlink(source)
 }
 
 export function getUploadDir(dirPath: string = 'public/uploads') {
@@ -91,7 +96,9 @@ export async function validateFiles(
 
     if (options.noTypeCheck) {
       if (!options.allowedTypes.includes(file.mimetype)) {
-        const message = `不支持的文件类型：${file.mimetype}，允许的类型为：${options.allowedTypes.join(', ')}`
+        const message = `不支持的文件类型：${
+          file.mimetype
+        }，允许的类型为：${options.allowedTypes.join(', ')}`
         throw new InvalidFileTypeError(message)
       }
     }
