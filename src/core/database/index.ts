@@ -8,7 +8,6 @@ class SequelizeClient {
   private static _instance: SequelizeClient // 单例模式
   private sequelizeClient: Sequelize | null = null // 数据库连接对象
   public enableStatus: boolean = false // 是否启用数据库
-  public updateDB = false // 是否更新数据库
 
   private constructor() {
     const sequelizeClient = new Sequelize(DATABASE.DB_NAME, DATABASE.USER, DATABASE.PASSWORD, {

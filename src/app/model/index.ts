@@ -98,17 +98,18 @@ GeneratedImage.belongsToMany(User, {
   through: UserImage,
   foreignKey: 'imageId',
   otherKey: 'userId',
-  as: 'users',
 })
+
 User.belongsToMany(GeneratedImage, {
   through: UserImage,
   foreignKey: 'userId',
   otherKey: 'imageId',
-  as: 'generatedImages',
 })
+
 // 定义 UserImage 和 User 之间的关联
 UserImage.belongsTo(GeneratedImage, { foreignKey: 'imageId' })
 UserImage.belongsTo(User, { foreignKey: 'userId' })
+
 export {
   User,
   Membership,
