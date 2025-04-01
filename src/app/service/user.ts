@@ -57,6 +57,23 @@ export const getOneByUsername = async (username: string): Promise<User> => {
   return res!
 }
 
+export const getUserInfo = async (user: { id?: string; username: string }): Promise<User> => {
+  // 获取条件
+  const { id, username } = user
+  const where: Partial<{ id: string; username: string }> = {}
+  Object.keys(user).forEach((key) => {
+    if (user[key as keyof typeof user]) {
+      where[key as keyof typeof where] = user[key as keyof typeof user]
+    }
+  })
+  const res = await User.findOne({ where })
+  if (!res) {
+    global.UnifyResponse.notFoundException(10404)
+  }
+
+  return res!
+}
+
 export const deleteById = async (id: number): Promise<boolean> => {
   const numDeleted = await User.destroy({ where: { id } })
   return !!numDeleted

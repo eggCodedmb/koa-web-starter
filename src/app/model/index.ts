@@ -12,6 +12,7 @@ import Menu from './menu'
 import RoleMenu from './role-menu'
 import GeneratedImage from './generatedImage'
 import UserImage from './user-image'
+import SDModel from './sd-model'
 
 // 关联关系：一个用户有一个会员信息
 User.hasOne(Membership, { foreignKey: 'userId' })
@@ -139,4 +140,5 @@ export {
   RoleMenu,
   GeneratedImage,
   UserImage,
+  SDModel,
 }

@@ -22,6 +22,13 @@ import {
   deleteGeneratedImageById,
   deleteGeneratedImageByIds,
 } from '~/app/service/generatedImage'
+import {
+  getSDModelList,
+  createSDModel,
+  updateSDModelById,
+  deleteSDModelById,
+} from '~/app/service/sd-model'
+import Storage from '~/utils/storage'
 
 const tag = tags(['AI绘图接口'])
 @prefix('/v1')
@@ -32,13 +39,72 @@ export default class TextToImgController {
   @tag
   @auth()
   public async getModels(ctx: Context): Promise<void> {
-    const res = await Http.get('/sdapi/v1/sd-models')
+    const res = await getSDModelList()
     ctx.body = {
       code: global.SUCCESS_CODE,
       message: 'success',
-      result: {
-        models: res,
-      },
+      result: res,
+    }
+  }
+
+  // 刷新模型列表
+  @request('get', '/refresh-models')
+  @summary('刷新模型列表')
+  @description('example: /refresh-models')
+  @tag
+  @auth()
+  public async refreshModels(ctx: Context): Promise<void> {
+    const res = await Http.get('/sdapi/v1/sd-models')
+    await Storage.set('models', res)
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: 'success',
+      result: {},
+    }
+  }
+
+  // 创建模型
+  @request('post', '/sd-models')
+  @summary('创建模型')
+  @description('example: /sd-models')
+  @tag
+  @body({
+    label: { type: 'string', required: true, description: '模型名称' },
+    value: { type: 'string', required: true, description: '模型值' },
+    image: { type: 'string', required: false, description: '模型图片' },
+  })
+  @auth()
+  public async createModel(ctx: Context): Promise<void> {
+    const data = ctx.request.body
+    const res = await createSDModel(data)
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: 'success',
+      result: res,
+    }
+  }
+
+  @request('put', '/sd-models/{id}')
+  @summary('更新模型')
+  @description('example: /sd-models/1')
+  @tag
+  @query({
+    id: { type: 'string', required: true, description: '模型id' },
+  })
+  @body({
+    label: { type: 'string', required: false, description: '模型名称' },
+    value: { type: 'string', required: false, description: '模型值' },
+    image: { type: 'string', required: false, description: '模型图片' },
+  })
+  @auth()
+  public async updateModel(ctx: Context): Promise<void> {
+    const id = ctx.params.id
+    const data = ctx.request.body
+    const res = await updateSDModelById(id, data)
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: `修改了${res[0]}条数据`,
+      result: null,
     }
   }
 

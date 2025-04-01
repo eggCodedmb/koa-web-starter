@@ -11,7 +11,7 @@ import { Paging } from '../dto/base'
 export const getGeneratedImageList = async (params: {
   start: number
   limit: number
-  order?: 'DESC' | 'ASC'
+  order: 'DESC' | 'ASC'
   userId?: string
 }): Promise<Paging<GeneratedImage>> => {
   const { start = 1, limit = 10 } = params
