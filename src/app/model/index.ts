@@ -106,10 +106,24 @@ User.belongsToMany(GeneratedImage, {
   otherKey: 'imageId',
 })
 
-// 定义 UserImage 和 User 之间的关联
-UserImage.belongsTo(GeneratedImage, { foreignKey: 'imageId' })
-UserImage.belongsTo(User, { foreignKey: 'userId' })
+UserImage.belongsTo(GeneratedImage, {
+  foreignKey: 'imageId', // 必须与前面定义的 foreignKey 一致
+  targetKey: 'id', // 明确指定目标模型的主键（如果主键不是默认id需要指定）
+})
 
+UserImage.belongsTo(User, {
+  foreignKey: 'userId', // 必须与前面定义的 foreignKey 一致
+  targetKey: 'id', // 明确指定目标模型的主键
+})
+
+// 反向关联（可选但推荐）
+GeneratedImage.hasMany(UserImage, {
+  foreignKey: 'imageId',
+})
+
+User.hasMany(UserImage, {
+  foreignKey: 'userId',
+})
 export {
   User,
   Membership,

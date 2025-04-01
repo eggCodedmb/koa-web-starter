@@ -32,7 +32,6 @@ export const getGeneratedImageList = async (params: {
         include: [
           {
             model: User,
-            as: 'user',
             attributes: ['id', 'nickname', 'email', 'avatar'],
           },
         ],
