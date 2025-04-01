@@ -13,6 +13,8 @@ export interface SchemaProps {
 export const pagingSchema: SchemaProps = {
   start: { type: 'number', required: false, default: 1 },
   limit: { type: 'number', required: false, default: 20 },
+  order: { type: 'string', required: false, default: 'DESC' },
+  userId: { type: 'string', required: false },
 }
 
 export class Paging<T> {

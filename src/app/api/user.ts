@@ -18,7 +18,6 @@ import {
   deleteById,
   getById,
   getList,
-  getPage,
   updateUser,
   getOneByUsername,
   updatePasswordByUserName,
@@ -77,32 +76,15 @@ export default class UserController {
   @summary('获取用户列表')
   @description('示例：/user/list')
   @tag
-  @auth()
-  async list(ctx: Context) {
-    const list = await getList()
-    ctx.body = { list }
-    ctx.body = {
-      code: global.SUCCESS_CODE,
-      message: '获取成功',
-      result: {
-        list,
-      },
-    }
-  }
-
-  @request('get', '/page')
-  @summary('分页获取用户')
-  @description('示例：/user/page')
-  @tag
   @query(pagingSchema)
-  @auth()
-  async page(ctx: Context) {
-    const paging = await getPage(ctx)
+  async list(ctx: Context) {
+    const { start, limit, order = 'DESC', userId } = ctx.validatedQuery
+    const res = await getList({ start, limit, order, userId })
     ctx.body = {
       code: global.SUCCESS_CODE,
       message: '获取成功',
       result: {
-        paging,
+        ...res,
       },
     }
   }

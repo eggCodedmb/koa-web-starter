@@ -62,17 +62,23 @@ export const deleteById = async (id: number): Promise<boolean> => {
   return !!numDeleted
 }
 
-export const getList = async (): Promise<User[]> => {
-  return await User.findAll()
-}
-
-export const getPage = async (ctx: Context): Promise<Paging<User>> => {
-  const { start, limit } = ctx.validatedQuery
+export const getList = async (param: {
+  start: number
+  limit: number
+  order: 'ASC' | 'DESC'
+  userId?: string
+}): Promise<Paging<User>> => {
+  const { start, limit, order, userId } = param
   const offset = (start - 1) * limit
-  const pageRel = await User.findAll({ offset, limit })
-  const totalRel = (await User.findAll()).length
+  const where = userId ? { id: userId } : {}
 
-  return new Paging(pageRel, totalRel, start, limit)
+  const { count, rows } = await User.findAndCountAll({
+    where,
+    order: [['created_at', order]],
+    offset,
+    limit,
+  })
+  return new Paging(rows, count, start, limit)
 }
 
 export const curUser = async (ctx: Context): Promise<User> => {
