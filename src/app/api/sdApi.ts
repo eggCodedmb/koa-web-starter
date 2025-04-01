@@ -113,4 +113,23 @@ export default class TextToImgController {
       },
     }
   }
+  @request('get', '/generated-images')
+  @summary('获取生成的图片列表')
+  @description('example: /generated-images')
+  @tag
+  @query({
+    start: { type: 'number', required: false, description: '分页起始位置' },
+    limit: { type: 'number', required: false, description: '分页大小' },
+    order: { type: 'string', required: false, description: '排序方式' },
+    userId: { type: 'string', required: false, description: '用户id' },
+  })
+  public async getGeneratedImageList(ctx: Context): Promise<void> {
+    const { start = 1, limit = 10, order = 'DESC', userId } = ctx.query as any
+    const res = await getGeneratedImageList({ start, limit, order, userId })
+    ctx.body = {
+      code: global.SUCCESS_CODE,
+      message: 'success',
+      result: res,
+    }
+  }
 }

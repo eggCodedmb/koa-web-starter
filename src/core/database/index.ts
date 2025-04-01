@@ -6,8 +6,9 @@ const DATABASE = CONFIG.DATABASE
 
 class SequelizeClient {
   private static _instance: SequelizeClient // 单例模式
-  private sequelizeClient: Sequelize | null = null // sequelize客户端
-  public enableStatus: boolean = false // 是否启用
+  private sequelizeClient: Sequelize | null = null // 数据库连接对象
+  public enableStatus: boolean = false // 是否启用数据库
+  public updateDB = false // 是否更新数据库
 
   private constructor() {
     const sequelizeClient = new Sequelize(DATABASE.DB_NAME, DATABASE.USER, DATABASE.PASSWORD, {
@@ -22,11 +23,14 @@ class SequelizeClient {
       timezone: DATABASE.TIMEZONE, // 时区
       logging: false, // 是否打印sql
     })
+
+    this.enableStatus = true // 默认启用数据库
+    
     sequelizeClient
       .authenticate()
       .then((res) => {
-        this.enableStatus = true
         console.log('✅ 数据库连接成功')
+        this.enableStatus = true
       })
       .catch((err) => {
         this.enableStatus = false
@@ -35,8 +39,6 @@ class SequelizeClient {
       })
 
     this.sequelizeClient = sequelizeClient
-    // 同步模型
-    this.syncModel()
   }
 
   public static getInstance() {
@@ -54,16 +56,44 @@ class SequelizeClient {
     return this.enableStatus
   }
 
-  // 同步模型
-  public async syncModel() {
-    await this.sequelizeClient?.sync({ alter: true })  // 自动更新表结构
-    console.log('✅ 同步所有模型')
+  /**
+   *
+   * @param options
+   * force: 是否强制同步，会先删除表再创建
+   * alter: 是否自动修改表结构
+   * logging: 是否显示日志
+   * @returns
+   */
+  public async updateModel(options?: {
+    force?: boolean // 强制同步，会先删除表再创建
+    alter?: boolean // 自动修改表结构
+    logging?: boolean // 是否显示日志
+  }): Promise<boolean> {
+    if (!this.sequelizeClient) {
+      console.error('数据库未连接')
+      return false
+    }
+
+    try {
+      const syncOptions = {
+        force: options?.force || false,
+        alter: options?.alter || true,
+        logging: options?.logging || false,
+      }
+
+      await this.sequelizeClient.sync(syncOptions)
+      console.log('✅ 数据库模型同步完成')
+      return true
+    } catch (error) {
+      console.error('❌ 数据库模型同步失败:', error)
+      return false
+    }
   }
 
   // 通过事务暴露transaction方法
   public async startTransaction(): Promise<Transaction> {
     if (!this.sequelizeClient) {
-      throw new Error('Sequelize client is not initialized')
+      throw new Error('数据库未连接')
     }
     return await this.sequelizeClient.transaction()
   }

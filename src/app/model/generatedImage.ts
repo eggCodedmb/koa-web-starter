@@ -3,7 +3,7 @@ import type { IBaseModel } from './base'
 import { BaseModel, baseFields, baseOptions } from './base'
 
 export interface IGeneratedImage extends IBaseModel {
-  userId: string
+  userId?: string
   imageUrl: string
   prompt: string
   negativePrompt?: string
