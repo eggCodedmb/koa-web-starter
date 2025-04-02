@@ -28,7 +28,6 @@ import {
   updateSDModelById,
   deleteSDModelById,
 } from '~/app/service/sd-model'
-import Storage from '~/utils/storage'
 
 const tag = tags(['AI绘图接口'])
 @prefix('/v1')
@@ -39,7 +38,8 @@ export default class TextToImgController {
   @tag
   @auth()
   public async getModels(ctx: Context): Promise<void> {
-    const res = await getSDModelList()
+    // const res = await getSDModelList()
+    const res = await global.storage.get('sd-models')
     ctx.body = {
       code: global.SUCCESS_CODE,
       message: 'success',
@@ -54,12 +54,13 @@ export default class TextToImgController {
   @tag
   @auth()
   public async refreshModels(ctx: Context): Promise<void> {
-    const res = await Http.get('/sdapi/v1/sd-models')
-    await Storage.set('models', res)
+    const models = await Http.get('/sdapi/v1/sd-models')
+    await global.storage.del('sd-models')
+    await global.storage.set('sd-models', models)
     ctx.body = {
       code: global.SUCCESS_CODE,
       message: 'success',
-      result: {},
+      result: '刷新成功',
     }
   }
 

@@ -1,6 +1,7 @@
 import type { UnifyResponse } from '../core/exception/unify-response'
 import type { LoggerOptions } from '../core/log'
 import type nodePersist from 'node-persist'
+import { SimpleStorage } from "~/utils/storage";
 
 interface LoggerOptions {
   request: Function
@@ -14,7 +15,7 @@ declare global {
   var UnifyResponse: UnifyResponse
   var SUCCESS_CODE: number
   var Logger: LoggerOptions
-  var storage: nodePersist // 存储全局
+  var storage: SimpleStorage // 存储全局
 }
 interface UploadResult {
   originalName?: string
