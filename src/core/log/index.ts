@@ -63,6 +63,11 @@ const formatText = {
       console.log(info)
     }
     logText += `\n!!!!!!!!!!!!!!!!!!!! ERROR LOG END !!!!!!!!!!!!!!!!!!!!\n`
+
+    createLog({
+      logType: 'error',
+      content: logText,
+    })
     return logText
   },
 

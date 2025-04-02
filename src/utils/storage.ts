@@ -29,9 +29,9 @@ export class SimpleStorage {
         dir: this.options.dir,
         ttl: this.options.ttl,
       })
-      console.log('✅ Storage')
+      console.log('✅ 本地存储')
     } catch (error) {
-      console.error('❌ Storage', error)
+      global.Logger.error('❌ 本地存储', error)
       throw error
     }
   }

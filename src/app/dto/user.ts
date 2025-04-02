@@ -9,15 +9,17 @@ export const userSchema: SchemaProps = {
     type: 'string',
     required: true,
     description: '用户名',
-    example: 'admin',
+    example: 'dongdong',
     pattern: userNameReg,
+    message: '用户名必须包含字母和数字，且长度至少为4位',
   },
   password: {
     type: 'string',
     required: true,
     description: '密码',
-    example: '1234DONG',
+    example: '1234Dong',
     pattern: passwordReg,
+    message: '密码必须包含字母和数字，且长度至少为6位',
   },
   email: {
     type: 'string',
@@ -46,6 +48,7 @@ export const passwordSchema: SchemaProps = {
     required: true,
     description: '新密码',
     pattern: passwordReg,
+    message: '密码必须包含字母和数字，且长度至少为6位',
   },
 }
 
