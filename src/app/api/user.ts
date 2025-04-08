@@ -10,7 +10,7 @@ import {
   summary,
   tags,
 } from 'koa-swagger-decorator'
-import { pagingSchema } from '~/app/dto/base'
+import { pagingSchemaUser } from '~/app/dto/base'
 import { passwordSchema, userSchema, userInfoSchema } from '~/app/dto/user'
 import {
   createOne,
@@ -18,8 +18,8 @@ import {
   deleteById,
   getList,
   updateUser,
-  getOneByUsername,
   updatePasswordByUserName,
+  getUserInfo,
 } from '~/app/service/user'
 import { getVIPById } from '~/app/service/vip'
 import auth from '~/core/auth'
@@ -52,10 +52,15 @@ export default class UserController {
   @summary('获取用户列表')
   @description('示例：/user/list')
   @tag
-  @query(pagingSchema)
+  @query(pagingSchemaUser)
   async list(ctx: Context) {
-    const { start, limit, order = 'DESC', userId } = ctx.validatedQuery
-    const res = await getList({ start, limit, order, userId })
+    const { start, limit, order = 'DESC', email, username, nickname } = ctx.validatedQuery
+    const user = {
+      email,
+      username,
+      nickname,
+    }
+    const res = await getList({ start, limit, order, user })
     ctx.body = {
       code: global.SUCCESS_CODE,
       message: '获取成功',
@@ -98,17 +103,22 @@ export default class UserController {
   @tag
   @security([{ api_key: [] }])
   @body(passwordSchema)
+  @auth()
   async updatePassword(ctx: Context) {
-    let { username, oldPassword, newPassword } = ctx.validatedBody
-
-    const { password, ...res } = await getOneByUsername(username)
-
-    if (!password) return global.UnifyResponse.notFoundException(20001) // 用户未找到
-    const isPassword = await compare(oldPassword, password)
-    if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
+    const { username, password, newPassword } = ctx.validatedBody
+    const res = await getUserInfo(username)
+    if (!res?.dataValues.username) return global.UnifyResponse.notFoundException(20001) // 用户未找到
+    const isPassword = await compare(password, res?.dataValues.password)
+    if (!isPassword) return global.UnifyResponse.notFoundException(20002) // 密码错误
     const hashPassword = await encrypt(newPassword)
-    await updatePasswordByUserName(username, hashPassword)
-    global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE, message: '修改成功' })
+    const id = ctx.state.user?.id
+    if (id) {
+      await updatePasswordByUserName(id, hashPassword)
+      global.UnifyResponse.updateSuccess({ code: global.SUCCESS_CODE, message: '修改成功' })
+    } else {
+      global.UnifyResponse.notFoundException(20000)
+      global.Logger.error('修改密码失败')
+    }
   }
 
   @request('delete', '/{id}')

@@ -5,7 +5,7 @@ import { Paging } from '../dto/base'
 import { decodeToken } from '~/core/auth'
 import { createOneVip } from '../service/vip'
 import SequelizeClient from '~/core/database'
-
+import { Op } from 'sequelize'
 export const createOne = async (newOne: IUserModel): Promise<User> => {
   const t = await SequelizeClient.startTransaction()
   try {
@@ -33,14 +33,8 @@ export const updateUser = async (key: string, newOne: IUserModel) => {
   return res
 }
 
-export const updatePasswordByUserName = async (
-  username: string,
-  password: string
-): Promise<User> => {
-  const one = await User.findByPk(username)
-  if (!one) {
-    global.UnifyResponse.notFoundException(10404)
-  }
+export const updatePasswordByUserName = async (id: string, password: string) => {
+  const one = await User.findByPk(id)
   return await one!.update({ password })
 }
 
@@ -73,15 +67,19 @@ export const getList = async (param: {
   limit: number
   order: 'ASC' | 'DESC'
   user: {
-    id: string
     username: string
     email: string
     nickname: string
   }
 }): Promise<Paging<User>> => {
-  const { start, limit, order, user } = param
+  const { start, limit, order, user = {} } = param
   const offset = (start - 1) * limit
-  const where = user ? { ...user } : {}
+  const where: Record<string, any> = {}
+  Object.entries(user).forEach(([key, value]) => {
+    if (value) {
+      where[key] = { [Op.like]: `%${value}%` } // 添加模糊查询
+    }
+  })
   const { count, rows } = await User.findAndCountAll({
     where,
     order: [['created_at', order]],

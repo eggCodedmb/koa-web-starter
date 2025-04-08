@@ -8,7 +8,7 @@ const tag = tags(['身份验证'])
 export const tokenSchema = {
   username: { type: 'string', required: true },
   password: { type: 'string', required: false },
-  type: { type: 'number', required: true },
+  type: { type: 'number', required: true, default: 1 },
 }
 
 @prefix('/token')
