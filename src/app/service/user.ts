@@ -57,21 +57,10 @@ export const getOneByUsername = async (username: string): Promise<User> => {
   return res!
 }
 
-export const getUserInfo = async (user: { id?: string; username: string }): Promise<User> => {
-  // 获取条件
-  const { id, username } = user
-  const where: Partial<{ id: string; username: string }> = {}
-  Object.keys(user).forEach((key) => {
-    if (user[key as keyof typeof user]) {
-      where[key as keyof typeof where] = user[key as keyof typeof user]
-    }
-  })
+export const getUserInfo = async (username: string): Promise<User | null> => {
+  const where = username ? { username } : {}
   const res = await User.findOne({ where })
-  if (!res) {
-    global.UnifyResponse.notFoundException(10404)
-  }
-
-  return res!
+  return res ? res : null
 }
 
 export const deleteById = async (id: number): Promise<boolean> => {
@@ -83,12 +72,16 @@ export const getList = async (param: {
   start: number
   limit: number
   order: 'ASC' | 'DESC'
-  userId?: string
+  user: {
+    id: string
+    username: string
+    email: string
+    nickname: string
+  }
 }): Promise<Paging<User>> => {
-  const { start, limit, order, userId } = param
+  const { start, limit, order, user } = param
   const offset = (start - 1) * limit
-  const where = userId ? { id: userId } : {}
-
+  const where = user ? { ...user } : {}
   const { count, rows } = await User.findAndCountAll({
     where,
     order: [['created_at', order]],

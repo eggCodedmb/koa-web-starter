@@ -10,8 +10,7 @@ export interface IUserModel extends IBaseModel {
   avatar?: string
 }
 
-export default class User extends BaseModel<IUserModel, IUserModel> {
-}
+export default class User extends BaseModel<IUserModel, IUserModel> {}
 
 User.init(
   {

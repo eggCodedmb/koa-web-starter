@@ -16,43 +16,19 @@ import {
   createOne,
   curUser,
   deleteById,
-  getById,
   getList,
   updateUser,
   getOneByUsername,
   updatePasswordByUserName,
 } from '~/app/service/user'
 import { getVIPById } from '~/app/service/vip'
-import auth, { authAll } from '~/core/auth'
+import auth from '~/core/auth'
 import { encrypt, compare } from '~/core/encrypt/bcrypt'
-import { generateToken } from '~/core/auth'
 
 const tag = tags(['用户管理'])
 
 @prefix('/user')
 export default class UserController {
-  @request('post', '/login')
-  @summary('用户登录')
-  @description('示例：/user/login')
-  @tag
-  @body(userSchema)
-  async login(ctx: Context) {
-    const { username, password } = ctx.validatedBody
-    const user = await getOneByUsername(username)
-    if (!user) return global.UnifyResponse.notFoundException(20001) // 用户未找到
-    const isPassword = await compare(password, user.password)
-    if (!isPassword) return global.UnifyResponse.notFoundException(20001) // 密码错误
-    const token = generateToken(user.id)
-    ctx.body = {
-      code: global.SUCCESS_CODE,
-      message: '登录成功',
-      result: {
-        user,
-        token,
-      },
-    }
-  }
-
   @request('get', '/me')
   @summary('获取当前用户信息')
   @description('示例：/user/me')
