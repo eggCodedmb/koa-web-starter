@@ -57,21 +57,10 @@ Role.belongsToMany(Permission, {
   foreignKey: 'roleId',
   otherKey: 'permissionId',
 })
+
 Permission.belongsToMany(Role, {
   through: RolePermission, // 中间表
   foreignKey: 'permissionId',
-  otherKey: 'roleId',
-})
-
-// 一个角色可以拥有多个菜单（多对多的关系）
-Role.belongsToMany(Menu, {
-  through: RolePermission, // 通过角色-权限关联表管理菜单
-  foreignKey: 'roleId',
-  otherKey: 'menuId',
-})
-Menu.belongsToMany(Role, {
-  through: RolePermission, // 通过角色-权限关联表管理菜单
-  foreignKey: 'menuId',
   otherKey: 'roleId',
 })
 
@@ -79,20 +68,21 @@ Menu.belongsToMany(Role, {
 UserRole.belongsTo(User, { foreignKey: 'userId' })
 UserRole.belongsTo(Role, { foreignKey: 'roleId' })
 
-// 定义 RolePermission 和 Role 之间的关联
-RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
-RolePermission.belongsTo(Permission, { foreignKey: 'permissionId' })
-
-// 定义 RolePermission 和 Menu 之间的关联
-RolePermission.belongsTo(Menu, { foreignKey: 'menuId' })
-RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
-
 // 定义 RolePermission 和 Permission 之间的关联
 RolePermission.belongsTo(Permission, { foreignKey: 'permissionId' })
 RolePermission.belongsTo(Role, { foreignKey: 'roleId' })
 
-RoleMenu.belongsTo(Role, { foreignKey: 'roleId' })
-RoleMenu.belongsTo(Menu, { foreignKey: 'menuId' })
+//权限与菜单的关系：一个权限可以出现在多个菜单中
+Permission.belongsToMany(Menu, {
+  through: RolePermission, // 中间表
+  foreignKey: 'permissionId', // 权限的外键
+  otherKey: 'menuId', // 菜单的外键
+})
+Menu.belongsToMany(Permission, {
+  through: RolePermission, // 中间表
+  foreignKey: 'menuId', // 菜单的外键
+  otherKey: 'permissionId', // 权限的外键
+})
 
 // ai绘图
 GeneratedImage.belongsToMany(User, {

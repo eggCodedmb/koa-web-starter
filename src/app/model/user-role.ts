@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import { BaseModel, baseOptions } from './base'
+import { BaseModel, baseOptions, baseFields } from './base'
 export interface IRole {
   userId: string
   roleId: string
@@ -11,6 +11,7 @@ export default class UserRole extends BaseModel<IRole, IRole> {
 
 UserRole.init(
   {
+    ...baseFields,
     userId: {
       type: DataTypes.UUID,
       allowNull: false,

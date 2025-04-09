@@ -13,7 +13,11 @@ if (enable) {
 
 const setup = async () => {
   await Promise.all(allModel)
-  // await SequelizeClient.updateModel({ force: true, alter: true, logging: false })
+  await SequelizeClient.updateModel({ force: true, alter: true, logging: false })
 }
 
-export const initDB = enable ? () => setup() : () => {}
+export const initDB = enable
+  ? () => setup()
+  : (err: any) => {
+      global.Logger.error(err)
+    }

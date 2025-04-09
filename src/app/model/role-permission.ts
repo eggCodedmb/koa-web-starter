@@ -4,11 +4,10 @@ import { BaseModel, baseOptions } from './base'
 export interface IRolePermission {
   roleId: string
   permissionId: string
+  menuId: string
 }
 
-export default class RolePermission extends BaseModel<IRolePermission, IRolePermission> {
-  
-}
+export default class RolePermission extends BaseModel<IRolePermission, IRolePermission> {}
 
 RolePermission.init(
   {
@@ -21,6 +20,11 @@ RolePermission.init(
       type: DataTypes.UUID,
       allowNull: false,
       comment: '权限ID',
+    },
+    menuId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      comment: '菜单ID',
     },
   },
   {

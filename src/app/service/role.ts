@@ -1,6 +1,7 @@
 import { Role, UserRole } from '~/app/model'
 import type { IRoleModel } from '~/app/model/role'
 import { Op } from 'sequelize'
+import SequelizeClient from '~/core/database'
 
 /**
  * 创建角色
@@ -16,19 +17,24 @@ export const createRole = async (data: IRoleModel): Promise<Role> => {
  * @param roleIds 角色ID数组
  */
 export const assignRolesToUser = async (userId: string, roleIds: string[]) => {
-  // 先清除用户原有的角色
-  await UserRole.destroy({
-    where: { userId },
-  })
+  const t = await SequelizeClient.startTransaction()
+  try {
+    // 强制删除用户所有角色
+    await UserRole.destroy({ where: { userId }, transaction: t, force: true })
 
-  // 然后重新分配角色
-  const userRoleData = roleIds.map((roleId) => ({
-    userId,
-    roleId,
-  }))
+    // 然后重新分配角色
+    const userRoleData = roleIds.map((roleId) => ({
+      userId,
+      roleId,
+    }))
 
-  // 批量插入角色与用户的关系
-  await UserRole.bulkCreate(userRoleData)
+    // 批量插入角色与用户的关系
+    await UserRole.bulkCreate(userRoleData, { transaction: t })
+    await t.commit()
+  } catch (error) {
+    await t.rollback()
+    throw error
+  }
 }
 
 /**
@@ -58,12 +64,9 @@ export const getRolesByUserId = async (userId: string) => {
  * @returns 角色列表
  * */
 export const getRolesAll = async (name: string): Promise<Role[]> => {
-  return await Role.findAll({
-    where: {
-      name: {
-        [Op.like]: `%${name}%`,
-      },
-    },
-    attributes: ['id', 'name', 'description'],
+  const whereClause = name ? { name: { [Op.like]: `%${name}%` } } : {}
+  const res = await Role.findAll({
+    where: whereClause,
   })
+  return res
 }
